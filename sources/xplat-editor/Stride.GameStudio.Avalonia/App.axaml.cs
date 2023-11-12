@@ -80,7 +80,8 @@ public partial class App : Application
         var services = new object[]
         {
             dispatcherService,
-            new PluginService()
+            new PluginService(),
+            new DebugService(),
         };
         var serviceProvider = new ViewModelServiceProvider(services);
         serviceProvider.RegisterService(new EditorDebugService(serviceProvider));
