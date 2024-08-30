@@ -40,7 +40,7 @@ using Stride.Core.Packages;
 
 namespace Stride.Core.Assets.Editor.ViewModel
 {
-    public class SessionViewModel : DirtiableEditableViewModel, IAssetFinder
+    public class SessionViewModel : DispatcherViewModel, IAssetFinder
     {
         public static string StorePackageCategoryName = Tr._("External packages");
         public static string LocalPackageCategoryName = Tr._("Local packages");
@@ -124,7 +124,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
             get { return activeProperties; }
             set
             {
-                if (SetValueUncancellable(ref activeProperties, value))
+                if (SetValue(ref activeProperties, value))
                 {
                     ActiveAssetsChanged?.Invoke(this, new ActiveAssetsChangedArgs(value?.GetRelatedAssets().ToList()));
                 }
@@ -135,19 +135,21 @@ namespace Stride.Core.Assets.Editor.ViewModel
         /// Gets the current active project for build/startup operations.
         /// </summary>
         // TODO: this property should become cancellable to maintain action stack consistency! Undoing a "mark as root" operation after changing the current package wouldn't work.
-        public ProjectViewModel CurrentProject { get => currentProject; private set { var oldValue = currentProject; SetValueUncancellable(ref currentProject, value, () => UpdateCurrentProject(oldValue, value)); } }
+        public ProjectViewModel CurrentProject { get => currentProject; private set { var oldValue = currentProject; SetValue(ref currentProject, value, () => UpdateCurrentProject(oldValue, value)); } }
 
         [NotNull]
         public ThumbnailsViewModel Thumbnails { get; }
 
-        public int ImportEffectLogPendingCount { get => importEffectLogPendingCount; set => SetValueUncancellable(ref importEffectLogPendingCount, value); }
+        public int ImportEffectLogPendingCount { get => importEffectLogPendingCount; set => SetValue(ref importEffectLogPendingCount, value); }
 
         public IEditorDialogService Dialogs => ServiceProvider.Get<IEditorDialogService>();
+
+        public IUndoRedoService UndoRedoService => ServiceProvider.Get<IUndoRedoService>();
 
         [NotNull]
         public AssetPropertyGraphContainer GraphContainer { get; }
 
-        public bool SelectionIsRoot { get => selectionIsRoot; internal set { SetValueUncancellable(ref selectionIsRoot, value); UpdateSessionState(); } }
+        public bool SelectionIsRoot { get => selectionIsRoot; internal set { SetValue(ref selectionIsRoot, value); UpdateSessionState(); } }
 
         [NotNull]
         public SessionNodeContainer AssetNodeContainer { get; }
@@ -187,7 +189,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
         public ICommandBase ToggleIsRootOnSelectedAssetCommand { get; }
 
-        public ICommandBase ImportEffectLogCommand { get => importEffectLogCommand; set => SetValueUncancellable(ref importEffectLogCommand, value); }
+        public ICommandBase ImportEffectLogCommand { get => importEffectLogCommand; set => SetValue(ref importEffectLogCommand, value); }
 
         public ICommandBase NextSelectionCommand { get; }
 
@@ -1084,7 +1086,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
         private bool HasUnsavedAssets()
         {
-            return IsDirty || LocalPackages.Any(package => package.IsDirty || package.Assets.Any(asset => asset.IsDirty));
+            return LocalPackages.Any(package => package.IsDirty || package.Assets.Any(asset => asset.IsDirty));
         }
 
         private PackageViewModel CreateProjectViewModel(PackageContainer packageContainer, bool packageAlreadyInSession)

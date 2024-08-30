@@ -165,9 +165,6 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
         public override string TypeDisplayName => "Package";
 
-        /// <inheritdoc/>
-        public override IEnumerable<IDirtiable> Dirtiables => base.Dirtiables.Concat(Session.Dirtiables);
-
         bool IPropertyProviderViewModel.CanProvidePropertiesViewModel => true;
 
         /// <inheritdoc/>
