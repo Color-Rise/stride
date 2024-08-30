@@ -12,9 +12,8 @@ using Stride.Core.Presentation.ViewModels;
 
 namespace Stride.Core.Assets.Editor.ViewModel
 {
-    public abstract class SessionObjectViewModel : DirtiableEditableViewModel, IAddChildViewModel, IIsEditableViewModel, ISessionObjectViewModel
+    public abstract class SessionObjectViewModel : DirtiableEditableViewModel, IAddChildViewModel, ISessionObjectViewModel
     {
-        private bool isEditing;
         private bool isDeleted = true;
 
         protected SessionObjectViewModel([NotNull] SessionViewModel session)
@@ -35,16 +34,6 @@ namespace Stride.Core.Assets.Editor.ViewModel
         /// Gets whether this object is currently deleted.
         /// </summary>
         public bool IsDeleted { get { return isDeleted; } set { SetValue(ref isDeleted, value, UpdateIsDeletedStatus); } }
-
-        /// <summary>
-        /// Gets whether this object is editable.
-        /// </summary>
-        public abstract bool IsEditable { get; }
-
-        /// <summary>
-        /// Gets or sets whether this package is being edited in the view.
-        /// </summary>
-        public virtual bool IsEditing { get { return isEditing; } set { if (IsEditable) SetValueUncancellable(ref isEditing, value); } }
 
         /// <summary>
         /// Gets the display name of the type of this <see cref="SessionObjectViewModel"/>.
