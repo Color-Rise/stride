@@ -45,6 +45,7 @@ public abstract class EditableViewModel : DispatcherViewModel, IIsEditableViewMo
     /// <summary>
     /// Gets the undo/redo service used by this view model.
     /// </summary>
+    // FIXME xplat-editor should be nullable (i.e. service not guaranteed to exist)
     public IUndoRedoService UndoRedoService => ServiceProvider.Get<IUndoRedoService>();
 
     protected void RegisterMemberCollectionForActionStack(string name, INotifyCollectionChanged collection)

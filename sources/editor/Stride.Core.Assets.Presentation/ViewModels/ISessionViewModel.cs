@@ -4,16 +4,19 @@
 using Stride.Core.Assets.Analysis;
 using Stride.Core.Assets.Quantum;
 using Stride.Core.Presentation.Collections;
-using Stride.Core.Presentation.Services;
 using Stride.Core.Presentation.ViewModels;
+using Stride.Core.Translation;
 
 namespace Stride.Core.Assets.Presentation.ViewModels;
 
-public interface ISessionViewModel
+public interface ISessionViewModel : IDispatcherViewModel, IViewModelBase
 {
-    IEnumerable<AssetViewModel> AllAssets { get; }
+    public static string StorePackageCategoryName = Tr._("External packages");
+    public static string LocalPackageCategoryName = Tr._("Local packages");
 
-    IEnumerable<PackageViewModel> AllPackages { get; }
+    IEnumerable<AssetViewModel> AllAssets => AllPackages.SelectMany(x => x.Assets);
+
+    IEnumerable<PackageViewModel> AllPackages => PackageCategories.Values.SelectMany(x => x.Content);
 
     AssetNodeContainer AssetNodeContainer { get; }
 
@@ -21,22 +24,24 @@ public interface ISessionViewModel
 
     IAssetDependencyManager DependencyManager { get; }
 
-    IDispatcherService Dispatcher { get; }
-
     AssetPropertyGraphContainer GraphContainer { get; }
 
-    IObservableCollection<PackageViewModel> LocalPackages { get; }
+    IObservableCollection<PackageViewModel> LocalPackages => PackageCategories[LocalPackageCategoryName].Content;
 
     IReadOnlyDictionary<string, PackageCategoryViewModel> PackageCategories { get; }
 
-    IViewModelServiceProvider ServiceProvider { get; }
+    IAssetSourceTrackerViewModel SourceTracker { get; }
 
-    IAssetSourceTrackerViewModel SourceTracker { get;}
+    IObservableCollection<PackageViewModel> StorePackages => PackageCategories[StorePackageCategoryName].Content;
 
-    IObservableCollection<PackageViewModel> StorePackages { get; }
-
+    /// <summary>
+    /// Raised when some assets are modified.
+    /// </summary>
     event EventHandler<AssetChangedEventArgs>? AssetPropertiesChanged;
 
+    /// <summary>
+    /// Raised when the session state changed (e.g. current package).
+    /// </summary>
     event EventHandler<SessionStateChangedEventArgs>? SessionStateChanged;
 
     /// <summary>
@@ -46,6 +51,7 @@ public interface ISessionViewModel
     /// <returns>An <see cref="AssetViewModel"/> that matches the given identifier if available. Otherwise, <c>null</c>.</returns>
     AssetViewModel? GetAssetById(AssetId id);
 
+    // FIXME xplat-editor: ideally this should be defined and used on the editor-side only
     Type GetAssetViewModelType(AssetItem assetItem);
 
     /// <summary>

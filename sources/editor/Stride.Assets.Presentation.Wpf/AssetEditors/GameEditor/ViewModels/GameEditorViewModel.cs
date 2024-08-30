@@ -7,6 +7,7 @@ using Stride.Core.Annotations;
 using Stride.Core.Presentation.Commands;
 using Stride.Core.Presentation.Interop;
 using Stride.Assets.Presentation.AssetEditors.GameEditor.Services;
+using Stride.Core.Assets.Quantum;
 
 namespace Stride.Assets.Presentation.AssetEditors.GameEditor.ViewModels
 {
@@ -48,7 +49,7 @@ namespace Stride.Assets.Presentation.AssetEditors.GameEditor.ViewModels
         /// The <see cref="SessionNodeContainer"/> to use to create Quantum graphs for asset side elements.
         /// </summary>
         [NotNull]
-        internal SessionNodeContainer NodeContainer => Session.AssetNodeContainer;
+        internal AssetNodeContainer NodeContainer => Session.AssetNodeContainer;
 
         [NotNull]
         protected internal virtual IEditorGameController Controller { get; }

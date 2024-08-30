@@ -132,7 +132,7 @@ namespace Stride.Assets.Presentation.AssemblyReloading
             return assetItemsToReload;
         }
 
-        private static void PostAssemblyReloading(IUndoRedoService actionService, SessionNodeContainer nodeContainer, ReloadingVisitor reloaderVisitor, ILogger log, Dictionary<AssetViewModel, List<ItemToReload>> assetItemsToReload)
+        private static void PostAssemblyReloading(IUndoRedoService actionService, AssetNodeContainer nodeContainer, ReloadingVisitor reloaderVisitor, ILogger log, Dictionary<AssetViewModel, List<ItemToReload>> assetItemsToReload)
         {
             log?.Info("Updating components with newly loaded assemblies");
 

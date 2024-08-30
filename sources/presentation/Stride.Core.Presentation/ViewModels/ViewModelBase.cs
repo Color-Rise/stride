@@ -11,7 +11,7 @@ namespace Stride.Core.Presentation.ViewModels;
 /// This abstract class represents a basic view model, implementing <see cref="INotifyPropertyChanging"/> and <see cref="INotifyPropertyChanged"/> and providing
 /// a set of <b>SetValue</b> helper methods to easly update a property and trigger the change notifications.
 /// </summary>
-public abstract class ViewModelBase : INotifyPropertyChanging, INotifyPropertyChanged, IDestroyable
+public abstract class ViewModelBase : INotifyPropertyChanging, INotifyPropertyChanged, IDestroyable, IViewModelBase
 {
 #if DEBUG
     private readonly List<string> changingProperties = [];

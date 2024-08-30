@@ -101,7 +101,7 @@ public class GameStudioThumbnailService : IThumbnailService
         }
         if (shouldRefreshAllThumbnails)
         {
-            var allAssets = session.AllAssets.Select(x => x.AssetItem).ToList();
+            var allAssets = ((ISessionViewModel)session).AllAssets.Select(x => x.AssetItem).ToList();
             Task.Run(() => AddThumbnailAssetItems(allAssets, QueuePosition.First));
         }
     }

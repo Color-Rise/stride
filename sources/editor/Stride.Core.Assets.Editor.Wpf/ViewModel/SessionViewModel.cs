@@ -22,7 +22,6 @@ using Stride.Core.Assets.Editor.ViewModel.Logs;
 using Stride.Core.Assets.Editor.ViewModel.Progress;
 using Stride.Core.Assets.Quantum;
 using Stride.Core.Assets.Templates;
-using Stride.Core;
 using Stride.Core.Annotations;
 using Stride.Core.Diagnostics;
 using Stride.Core.Extensions;
@@ -40,7 +39,7 @@ using Stride.Core.Packages;
 
 namespace Stride.Core.Assets.Editor.ViewModel
 {
-    public class SessionViewModel : DispatcherViewModel, IAssetFinder
+    public class SessionViewModel : DispatcherViewModel, ISessionViewModel, IAssetFinder
     {
         public static string StorePackageCategoryName = Tr._("External packages");
         public static string LocalPackageCategoryName = Tr._("Local packages");
@@ -84,14 +83,6 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
         public AssetCollectionViewModel ActiveAssetView { get; }
 
-        /// <summary>
-        /// Gets all assets contained in this session.
-        /// </summary>
-        /// <remarks>
-        /// Some assets in the session might not be accessible to some other assets/packages if they are located in another package that is not a dependency
-        /// to the asset/package. To safely retrieve all assets accessible from a specific package, use <see cref="PackageViewModel.AllAssets"/>.
-        /// </remarks>
-        [NotNull]
         public IEnumerable<AssetViewModel> AllAssets { get { return AllPackages.SelectMany(x => x.Assets); } }
 
         public TagsViewModel AssetTags { get; }
@@ -131,9 +122,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
             }
         }
 
-        /// <summary>
-        /// Gets the current active project for build/startup operations.
-        /// </summary>
+        /// <inheritdoc />
         // TODO: this property should become cancellable to maintain action stack consistency! Undoing a "mark as root" operation after changing the current package wouldn't work.
         public ProjectViewModel CurrentProject { get => currentProject; private set { var oldValue = currentProject; SetValue(ref currentProject, value, () => UpdateCurrentProject(oldValue, value)); } }
 
@@ -146,13 +135,11 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
         public IUndoRedoService UndoRedoService => ServiceProvider.Get<IUndoRedoService>();
 
-        [NotNull]
         public AssetPropertyGraphContainer GraphContainer { get; }
 
         public bool SelectionIsRoot { get => selectionIsRoot; internal set { SetValue(ref selectionIsRoot, value); UpdateSessionState(); } }
 
-        [NotNull]
-        public SessionNodeContainer AssetNodeContainer { get; }
+        public AssetNodeContainer AssetNodeContainer { get; }
 
         public ICommandBase SaveSessionCommand { get; }
 
@@ -197,16 +184,12 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
         public bool IsUpdatePackageEnabled { get; private set; }
 
-        /// <summary>
-        /// Gets the dependency manager associated to this session.
-        /// </summary>
+        /// <inheritdoc />
         public IAssetDependencyManager DependencyManager => session.DependencyManager;
 
         internal IAssetsPluginService PluginService => ServiceProvider.Get<IAssetsPluginService>();
 
-        /// <summary>
-        /// Raised when some assets are modified.
-        /// </summary>
+        /// <inheritdoc />
         public event EventHandler<AssetChangedEventArgs> AssetPropertiesChanged;
 
         /// <summary>
@@ -214,9 +197,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
         /// </summary>
         public event EventHandler<NotifyCollectionChangedEventArgs> DeletedAssetsChanged;
 
-        /// <summary>
-        /// Raised when the session state changed (e.g. current package).
-        /// </summary>
+        /// <inheritdoc />
         public event EventHandler<SessionStateChangedEventArgs> SessionStateChanged;
 
         /// <summary>
@@ -998,12 +979,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
             SessionStateChanged?.Invoke(this, new SessionStateChangedEventArgs());
         }
 
-        /// <summary>
-        /// Gets an <see cref="AssetViewModel"/> instance of the asset which as the given identifier, if available.
-        /// </summary>
-        /// <param name="id">The identifier of the asset to look for.</param>
-        /// <returns>An <see cref="AssetViewModel"/> that matches the given identifier if available. Otherwise, <c>null</c>.</returns>
-        [CanBeNull]
+        /// <inheritdoc />
         public AssetViewModel GetAssetById(AssetId id)
         {
             AssetViewModel result;
@@ -1028,20 +1004,14 @@ namespace Stride.Core.Assets.Editor.ViewModel
             return new FixupAssetContext(this);
         }
 
-        /// <summary>
-        /// Register an asset so it can be found using the <see cref="GetAssetById"/> method. This method is intended to be invoked only by <see cref="AssetViewModel"/>.
-        /// </summary>
-        /// <param name="asset">The asset to register.</param>
-        internal void RegisterAsset(AssetViewModel asset)
+        /// <inheritdoc />
+        public void RegisterAsset(AssetViewModel asset)
         {
             ((IDictionary<AssetId, AssetViewModel>)assetIdMap).Add(asset.Id, asset);
         }
 
-        /// <summary>
-        /// Unregister an asset previously registered with <see cref="RegisterAsset"/>. This method is intended to be invoked only by <see cref="AssetViewModel"/>.
-        /// </summary>
-        /// <param name="asset">The asset to register.</param>
-        internal void UnregisterAsset(AssetViewModel asset)
+        /// <inheritdoc />
+        public void UnregisterAsset(AssetViewModel asset)
         {
             ((IDictionary<AssetId, AssetViewModel>)assetIdMap).Remove(asset.Id);
         }

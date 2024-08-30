@@ -81,7 +81,7 @@ public sealed class AssetSourceTrackerViewModel : DispatcherViewModel, IAssetSou
                     var sourceFileChange = sourceFileChanges[i];
                     // Look first in the assets of the session, then in the list of deleted assets.
                     var asset = Session.GetAssetById(sourceFileChange.AssetId)
-                                ?? Session.AllPackages.SelectMany(x => x.DeletedAssets).FirstOrDefault(x => x.Id == sourceFileChange.AssetId);
+                                ?? ((ISessionViewModel)Session).AllPackages.SelectMany(x => x.DeletedAssets).FirstOrDefault(x => x.Id == sourceFileChange.AssetId);
                     if (asset is null)
                         continue;
 

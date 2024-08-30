@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
+using Stride.Core.Assets.Quantum;
 using Stride.Core.Presentation.ViewModels;
 using Stride.Core.Quantum;
 
@@ -20,7 +21,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
         /// <param name="assetItem">The <see cref="AssetItem"/> instance containing the asset with its current location.</param>
         /// <param name="container">The <see cref="NodeContainer"/> used to store the graph of properties of this asset.</param>
         /// <param name="canUndoRedoCreation">Indicates whether the creation of this view model will create a transaction in the undo/redo service.</param>
-        internal AssetViewModelConstructionParameters(IViewModelServiceProvider serviceProvider, DirectoryBaseViewModel directory, Package package, AssetItem assetItem, SessionNodeContainer container, bool canUndoRedoCreation)
+        internal AssetViewModelConstructionParameters(IViewModelServiceProvider serviceProvider, DirectoryBaseViewModel directory, Package package, AssetItem assetItem, AssetNodeContainer container, bool canUndoRedoCreation)
         {
             if (directory == null) throw new ArgumentNullException(nameof(directory));
             if (directory.Package == null) throw new ArgumentException("The provided directory must be in a project when creating an asset.");
@@ -54,7 +55,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
         /// <summary>
         /// Gets the <see cref="NodeContainer"/> used to store the graph of properties of this asset.
         /// </summary>
-        internal SessionNodeContainer Container { get; }
+        internal AssetNodeContainer Container { get; }
 
         /// <summary>
         /// Gets the action stack to provide to the base view model class.

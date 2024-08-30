@@ -13,4 +13,3 @@ namespace Stride.Core.Assets.Editor.ViewModel
         SessionViewModel Session { get; }
     }
 }
-

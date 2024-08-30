@@ -66,11 +66,11 @@ namespace Stride.Core.Assets.Editor.ViewModel
     /// <summary>
     /// A view model class that represents a single asset.
     /// </summary>
-    public abstract class AssetViewModel : SessionObjectViewModel, IChildViewModel, ISessionObjectViewModel, IAssetPropertyProviderViewModel, IDisposable
+    public abstract class AssetViewModel : SessionObjectViewModel, IChildViewModel, IAssetPropertyProviderViewModel, IDisposable
     {
         protected internal IAssetObjectNode AssetRootNode => PropertyGraph?.RootNode;
         protected readonly ObservableList<MenuCommandInfo> assetCommands;
-        protected readonly SessionNodeContainer NodeContainer;
+        protected readonly AssetNodeContainer NodeContainer;
         protected readonly bool Initializing;
         private readonly AnonymousCommand clearArchetypeCommand;
         private readonly AnonymousCommand createDerivedAssetCommand;

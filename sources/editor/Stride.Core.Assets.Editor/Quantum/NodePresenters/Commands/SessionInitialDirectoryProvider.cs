@@ -2,6 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using Stride.Core.Assets.Editor.ViewModels;
+using Stride.Core.Assets.Presentation.ViewModels;
 using Stride.Core.IO;
 
 namespace Stride.Core.Assets.Editor.Quantum.NodePresenters.Commands;
@@ -24,7 +25,7 @@ public class SessionInitialDirectoryProvider : IInitialDirectoryProvider
             if (sessionPath == null)
             {
                 // If there is no solution directory, try to use the directory of the first local package.
-                var firstPackage = session.LocalPackages.FirstOrDefault();
+                var firstPackage = ((ISessionViewModel)session).LocalPackages.FirstOrDefault();
                 if (firstPackage != null)
                     sessionPath = firstPackage.PackagePath;
             }

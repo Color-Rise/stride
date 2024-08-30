@@ -9,7 +9,7 @@ namespace Stride.Core.Presentation.ViewModels;
 /// This abstract class is an implementation of <see cref="ViewModelBase"/> that uses a dispatcher to invoke
 /// <see cref="OnPropertyChanging"/> and <see cref="OnPropertyChanged"/> handlers.
 /// </summary>
-public abstract class DispatcherViewModel : ViewModelBase
+public abstract class DispatcherViewModel : ViewModelBase, IDispatcherViewModel
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="DispatcherViewModel"/> class.
@@ -21,9 +21,7 @@ public abstract class DispatcherViewModel : ViewModelBase
         Dispatcher = serviceProvider.Get<IDispatcherService>();
     }
 
-    /// <summary>
-    /// Gets a dispatcher that is capable of executing code in the UI thread.
-    /// </summary>
+    /// <inheritdoc />
     [DataMemberIgnore]
     public IDispatcherService Dispatcher { get; }
 

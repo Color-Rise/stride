@@ -11,7 +11,6 @@ using Stride.Core.Assets.Quantum;
 using Stride.Core.Diagnostics;
 using Stride.Core.Extensions;
 using Stride.Core.IO;
-using Stride.Core.Presentation.Collections;
 using Stride.Core.Presentation.Commands;
 using Stride.Core.Presentation.Quantum.ViewModels;
 using Stride.Core.Presentation.Services;
@@ -22,9 +21,6 @@ namespace Stride.Core.Assets.Editor.ViewModels;
 
 public sealed partial class SessionViewModel : DispatcherViewModel, ISessionViewModel
 {
-    public static readonly string StorePackageCategoryName = Tr._("External packages");
-    public static readonly string LocalPackageCategoryName = Tr._("Local packages");
-
     private SessionObjectPropertiesViewModel activeProperties;
     private readonly ConcurrentDictionary<AssetId, AssetViewModel> assetIdMap = [];
     private ProjectViewModel? currentProject;
@@ -82,10 +78,10 @@ public sealed partial class SessionViewModel : DispatcherViewModel, ISessionView
         AssetLog = new AssetLogViewModel(ServiceProvider, this);
 
         // Construct package categories
-        var localPackageName = session.SolutionPath != null ? string.Format(Tr._(@"Solution '{0}'"), session.SolutionPath.GetFileNameWithoutExtension()) : LocalPackageCategoryName;
-        packageCategories.Add(LocalPackageCategoryName, new PackageCategoryViewModel(localPackageName, this));
-        packageCategories.Add(StorePackageCategoryName, new PackageCategoryViewModel(StorePackageCategoryName, this));
-        LocalPackages.CollectionChanged += LocalPackagesCollectionChanged;
+        var localPackageName = session.SolutionPath != null ? string.Format(Tr._(@"Solution '{0}'"), session.SolutionPath.GetFileNameWithoutExtension()) : ISessionViewModel.LocalPackageCategoryName;
+        packageCategories.Add(ISessionViewModel.LocalPackageCategoryName, new PackageCategoryViewModel(localPackageName, this));
+        packageCategories.Add(ISessionViewModel.StorePackageCategoryName, new PackageCategoryViewModel(ISessionViewModel.StorePackageCategoryName, this));
+        ((ISessionViewModel)this).LocalPackages.CollectionChanged += LocalPackagesCollectionChanged;
 
         // Initialize commands
         EditSelectedContentCommand = new AnonymousCommand(serviceProvider, OnEditSelectedContent);
@@ -127,10 +123,6 @@ public sealed partial class SessionViewModel : DispatcherViewModel, ISessionView
         }
     }
 
-    public IEnumerable<AssetViewModel> AllAssets => AllPackages.SelectMany(x => x.Assets);
-
-    public IEnumerable<PackageViewModel> AllPackages => PackageCategories.Values.SelectMany(x => x.Content);
-
     public AssetCollectionViewModel AssetCollection { get; }
 
     public AssetLogViewModel AssetLog { get; }
@@ -161,8 +153,6 @@ public sealed partial class SessionViewModel : DispatcherViewModel, ISessionView
 
     public AssetPropertyGraphContainer GraphContainer { get; }
 
-    public IObservableCollection<PackageViewModel> LocalPackages => PackageCategories[LocalPackageCategoryName].Content;
-
     public IMainViewModel Main { get; }
 
     public IReadOnlyDictionary<string, PackageCategoryViewModel> PackageCategories => packageCategories;
@@ -170,8 +160,6 @@ public sealed partial class SessionViewModel : DispatcherViewModel, ISessionView
     public UFile SolutionPath => session.SolutionPath;
 
     public IAssetSourceTrackerViewModel SourceTracker { get; private set; }
-
-    public IObservableCollection<PackageViewModel> StorePackages => PackageCategories[StorePackageCategoryName].Content;
 
     public ThumbnailsViewModel Thumbnails { get; }
 
@@ -189,14 +177,10 @@ public sealed partial class SessionViewModel : DispatcherViewModel, ISessionView
 
     internal SelectionService? SelectionService => ServiceProvider.TryGet<SelectionService>();
 
-    /// <summary>
-    /// Raised when some assets are modified.
-    /// </summary>
+    /// <inheritdoc />
     public event EventHandler<AssetChangedEventArgs>? AssetPropertiesChanged;
 
-    /// <summary>
-    /// Raised when the session state changed (e.g. current package).
-    /// </summary>
+    /// <inheritdoc />
     public event EventHandler<SessionStateChangedEventArgs>? SessionStateChanged;
 
     /// <inheritdoc />
@@ -260,7 +244,7 @@ public sealed partial class SessionViewModel : DispatcherViewModel, ISessionView
 
     private void AutoSelectCurrentProject()
     {
-        var currentProject = LocalPackages.OfType<ProjectViewModel>().FirstOrDefault(/* FIXME sxplat-editor x => x.Type == ProjectType.Executable && x.Platform == PlatformType.Windows*/) ?? LocalPackages.FirstOrDefault();
+        var currentProject = ((ISessionViewModel)this).LocalPackages.OfType<ProjectViewModel>().FirstOrDefault(/* FIXME sxplat-editor x => x.Type == ProjectType.Executable && x.Platform == PlatformType.Windows*/) ?? ((ISessionViewModel)this).LocalPackages.FirstOrDefault();
         if (currentProject != null)
         {
             SetCurrentProject(currentProject);
@@ -303,7 +287,7 @@ public sealed partial class SessionViewModel : DispatcherViewModel, ISessionView
         double progress = 0.0;
 
         // Create directory and asset view models for each project
-        foreach (var package in AllPackages)
+        foreach (var package in ((ISessionViewModel)this).AllPackages)
         {
             if (token.IsCancellationRequested)
                 return;
@@ -319,7 +303,7 @@ public sealed partial class SessionViewModel : DispatcherViewModel, ISessionView
 
         // This transaction is done to prevent action responding to undoRedoService.TransactionCompletion to occur during loading
         using var transaction = ActionService?.CreateTransaction();
-        ProcessAddedPackages(AllPackages).Forget();
+        ProcessAddedPackages(((ISessionViewModel)this).AllPackages).Forget();
     }
 
     private void LocalPackagesCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -362,7 +346,7 @@ public sealed partial class SessionViewModel : DispatcherViewModel, ISessionView
         }
 
         CurrentProject = project;
-        AllAssets.ForEach(x => x.Dependencies.NotifyRootAssetChange(false));
+        ((ISessionViewModel)this).AllAssets.ForEach(x => x.Dependencies.NotifyRootAssetChange(false));
         // FIXME xplat-editor
         //SelectionIsRoot = ActiveAssetView.SelectedAssets.All(x => x.Dependencies.IsRoot);
     }

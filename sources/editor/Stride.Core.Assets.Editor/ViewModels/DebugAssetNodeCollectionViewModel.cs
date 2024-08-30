@@ -60,7 +60,7 @@ public class DebugAssetNodeCollectionViewModel : DispatcherViewModel, IDebugPage
     {
         RefreshNodeToAssetMap();
         AssetNodes.Clear();
-        foreach (var asset in session.LocalPackages.SelectMany(x => x.Assets))
+        foreach (var asset in ((ISessionViewModel)session).LocalPackages.SelectMany(x => x.Assets))
         {
             var nodes = GetRegisterNodes(asset.PropertyGraph);
             if (nodes == null)
@@ -73,7 +73,7 @@ public class DebugAssetNodeCollectionViewModel : DispatcherViewModel, IDebugPage
 
     private void RefreshNodeToAssetMap()
     {
-        foreach (var asset in session.LocalPackages.SelectMany(x => x.Assets))
+        foreach (var asset in ((ISessionViewModel)session).LocalPackages.SelectMany(x => x.Assets))
         {
             var nodes = GetRegisterNodes(asset.PropertyGraph);
             if (nodes == null)
