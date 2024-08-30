@@ -1,11 +1,13 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
+using Stride.Core.IO;
 using Stride.Core.Presentation.ViewModels;
+using Stride.Core.Translation;
 
 namespace Stride.Core.Assets.Presentation.ViewModels;
 
-public abstract class SessionObjectViewModel : DirtiableEditableViewModel
+public abstract class SessionObjectViewModel : DirtiableEditableViewModel, ISessionObjectViewModel
 {
     private bool isDeleted = true;
 
@@ -56,4 +58,31 @@ public abstract class SessionObjectViewModel : DirtiableEditableViewModel
     /// Updates related session objects when the <see cref="IsDeleted"/> property changes.
     /// </summary>
     protected abstract void UpdateIsDeletedStatus();
+
+    protected virtual bool IsValidName(string value, out string? error)
+    {
+        if (value == null) throw new ArgumentNullException(nameof(value));
+
+        if (value.Length > 240)
+        {
+            error = Tr._p("Message", "The name is too long.");
+            return false;
+        }
+
+        if (value.Contains(UPath.DirectorySeparatorChar) || value.Contains(UPath.DirectorySeparatorCharAlt) || !UPath.IsValid(value))
+        {
+            error = Tr._p("Message", "The name contains invalid characters.");
+            return false;
+        }
+
+        if (string.IsNullOrEmpty(value))
+        {
+            error = Tr._p("Message", "The name is empty.");
+            return false;
+        }
+
+        error = null;
+
+        return true;
+    }
 }

@@ -41,11 +41,6 @@ namespace Stride.Core.Assets.Editor.ViewModel
         public abstract string TypeDisplayName { get; }
 
         /// <summary>
-        /// Gets the <see cref="ThumbnailData"/> associated to this <see cref="SessionObjectViewModel"/>.
-        /// </summary>
-        ThumbnailData ISessionObjectViewModel.ThumbnailData { get; } = null;
-
-        /// <summary>
         /// Marks this view model as undeleted.
         /// </summary>
         /// <param name="canUndoRedoCreation">Indicates whether a transaction should be created when doing this operation.</param>

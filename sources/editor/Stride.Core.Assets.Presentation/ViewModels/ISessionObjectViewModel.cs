@@ -5,5 +5,7 @@ namespace Stride.Core.Assets.Presentation.ViewModels;
 
 public interface ISessionObjectViewModel
 {
+    string Name { get; set; }
+
     ISessionViewModel Session { get; }
 }
