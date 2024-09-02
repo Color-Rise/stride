@@ -11,7 +11,7 @@ namespace Stride.Assets.Presentation.ViewModels;
 /// View model for <see cref="ProceduralModelAsset"/>.
 /// </summary>
 [AssetViewModel<ProceduralModelAsset>]
-public class ProceduralModelViewModel : AssetViewModel<ProceduralModelAsset>
+public sealed class ProceduralModelViewModel : AssetViewModel<ProceduralModelAsset>
 {
     public ProceduralModelViewModel(ConstructorParameters parameters)
         : base(parameters)

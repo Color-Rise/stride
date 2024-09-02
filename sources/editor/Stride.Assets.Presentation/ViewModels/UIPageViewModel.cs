@@ -11,7 +11,7 @@ namespace Stride.Assets.Presentation.ViewModels;
 /// View model for <see cref="UIPageAsset"/>.
 /// </summary>
 [AssetViewModel<UIPageAsset>]
-public class UIPageViewModel : UIBaseViewModel, IAssetViewModel<UIPageAsset>
+public sealed class UIPageViewModel : UIBaseViewModel, IAssetViewModel<UIPageAsset>
 {
     public UIPageViewModel(ConstructorParameters parameters)
         : base(parameters)
@@ -19,5 +19,5 @@ public class UIPageViewModel : UIBaseViewModel, IAssetViewModel<UIPageAsset>
     }
 
     /// <inheritdoc />
-    public new UIPageAsset Asset => (UIPageAsset)base.Asset;
+    public override UIPageAsset Asset => (UIPageAsset)base.Asset;
 }

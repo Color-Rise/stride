@@ -11,7 +11,7 @@ namespace Stride.Assets.Presentation.ViewModels;
 /// View model for <see cref="UILibraryAsset"/>.
 /// </summary>
 [AssetViewModel<UILibraryAsset>]
-public class UILibraryViewModel : UIBaseViewModel, IAssetViewModel<UILibraryAsset>
+public sealed class UILibraryViewModel : UIBaseViewModel, IAssetViewModel<UILibraryAsset>
 {
     public UILibraryViewModel(ConstructorParameters parameters)
         : base(parameters)
@@ -19,5 +19,5 @@ public class UILibraryViewModel : UIBaseViewModel, IAssetViewModel<UILibraryAsse
     }
 
     /// <inheritdoc />
-    public new UILibraryAsset Asset => (UILibraryAsset)base.Asset;
+    public override UILibraryAsset Asset => (UILibraryAsset)base.Asset;
 }

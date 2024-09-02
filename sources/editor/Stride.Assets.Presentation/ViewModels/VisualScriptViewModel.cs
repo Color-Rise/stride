@@ -11,7 +11,7 @@ namespace Stride.Assets.Presentation.ViewModels;
 /// View model for <see cref="VisualScriptAsset"/>.
 /// </summary>
 [AssetViewModel<VisualScriptAsset>]
-public class VisualScriptViewModel : AssetCompositeViewModel<VisualScriptAsset>
+public sealed class VisualScriptViewModel : AssetCompositeViewModel<VisualScriptAsset>
 {
     public VisualScriptViewModel(ConstructorParameters parameters)
         : base(parameters)

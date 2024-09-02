@@ -20,7 +20,7 @@ public abstract class SourceCodeViewModel<TSourceCodeAsset> : AssetViewModel<TSo
 /// View model for <see cref="SourceCodeAsset"/>.
 /// </summary>
 [AssetViewModel<SourceCodeAsset>]
-public class SourceCodeAssetViewModel : SourceCodeViewModel<SourceCodeAsset>
+public sealed class SourceCodeAssetViewModel : SourceCodeViewModel<SourceCodeAsset>
 {
     public SourceCodeAssetViewModel(ConstructorParameters parameters)
         : base(parameters)

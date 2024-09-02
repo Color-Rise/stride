@@ -11,7 +11,7 @@ namespace Stride.Assets.Presentation.ViewModels;
 /// View model for <see cref="SpriteFontAsset"/>.
 /// </summary>
 [AssetViewModel<SpriteFontAsset>]
-public class SpriteFontViewModel : AssetViewModel<SpriteFontAsset>
+public sealed class SpriteFontViewModel : AssetViewModel<SpriteFontAsset>
 {
     public SpriteFontViewModel(ConstructorParameters parameters)
         : base(parameters)

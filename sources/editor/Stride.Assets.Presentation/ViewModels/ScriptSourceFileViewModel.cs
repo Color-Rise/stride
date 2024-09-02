@@ -3,7 +3,6 @@
 
 using Stride.Assets.Scripts;
 using Stride.Core.Assets.Presentation.Annotations;
-using Stride.Core.Assets.Presentation.ViewModels;
 
 namespace Stride.Assets.Presentation.ViewModels;
 
@@ -11,7 +10,7 @@ namespace Stride.Assets.Presentation.ViewModels;
 /// View model for <see cref="ScriptSourceFileAsset"/>.
 /// </summary>
 [AssetViewModel<ScriptSourceFileAsset>]
-public class ScriptSourceFileViewModel : SourceCodeViewModel<ScriptSourceFileAsset>
+public sealed class ScriptSourceFileViewModel : SourceCodeViewModel<ScriptSourceFileAsset>
 {
     public ScriptSourceFileViewModel(ConstructorParameters parameters)
         : base(parameters)

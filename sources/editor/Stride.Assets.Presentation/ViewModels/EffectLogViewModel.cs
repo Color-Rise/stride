@@ -11,7 +11,7 @@ namespace Stride.Assets.Presentation.ViewModels;
 /// View model for <see cref="EffectLogAsset"/>.
 /// </summary>
 [AssetViewModel<EffectLogAsset>]
-public class EffectLogViewModel : AssetViewModel<EffectLogAsset>
+public sealed class EffectLogViewModel : AssetViewModel<EffectLogAsset>
 {
     public EffectLogViewModel(ConstructorParameters parameters)
         : base(parameters)

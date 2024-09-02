@@ -11,7 +11,7 @@ namespace Stride.Assets.Presentation.ViewModels;
 /// View model for <see cref="ModelAsset"/>.
 /// </summary>
 [AssetViewModel<ModelAsset>]
-public class ModelViewModel : AssetViewModel<ModelAsset>
+public sealed class ModelViewModel : AssetViewModel<ModelAsset>
 {
     public ModelViewModel(ConstructorParameters parameters)
         : base(parameters)

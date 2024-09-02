@@ -24,8 +24,8 @@ public class AssetViewModel<TAsset> : AssetViewModel, IAssetViewModel<TAsset>
     {
     }
 
-    /// <inheritdoc />
-    public new TAsset Asset => (TAsset)base.Asset;
+    /// <inheritdoc cref="IAssetViewModel{T}.Asset" />
+    public override TAsset Asset => (TAsset)base.Asset;
 }
 
 public abstract class AssetViewModel : SessionObjectViewModel, IAssetPropertyProviderViewModel
@@ -40,8 +40,8 @@ public abstract class AssetViewModel : SessionObjectViewModel, IAssetPropertyPro
     {
         Initializing = true;
 
-        this.assetItem = parameters.AssetItem;
-        this.directory = parameters.Directory;
+        assetItem = parameters.AssetItem;
+        directory = parameters.Directory;
         var forcedRoot = AssetType.GetCustomAttribute<AssetDescriptionAttribute>()?.AlwaysMarkAsRoot ?? false;
         Dependencies = new AssetDependenciesViewModel(this, forcedRoot);
         Sources = new AssetSourcesViewModel(this);
@@ -53,7 +53,7 @@ public abstract class AssetViewModel : SessionObjectViewModel, IAssetPropertyPro
         Initializing = false;
     }
 
-    public Asset Asset => AssetItem.Asset;
+    public virtual Asset Asset => AssetItem.Asset;
 
     public AssetItem AssetItem
     {
