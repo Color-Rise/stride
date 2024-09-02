@@ -31,6 +31,7 @@ using Stride.Core.Presentation.Windows;
 using Stride.Core.Translation;
 using Stride.Core.Translation.Providers;
 using Stride.Assets.Presentation;
+using Stride.Assets.Presentation.Services;
 using Stride.Editor.Build;
 using Stride.Editor.Engine;
 using Stride.Editor.Preview;
@@ -347,6 +348,8 @@ public static class Program
         if (renderDocManager != null)
             services.Add(renderDocManager);
         var serviceProvider = new ViewModelServiceProvider(services);
+        // FIXME xplat-editor should not be created here
+        serviceProvider.RegisterService(new AssetViewModelService(serviceProvider));
         return serviceProvider;
     }
 

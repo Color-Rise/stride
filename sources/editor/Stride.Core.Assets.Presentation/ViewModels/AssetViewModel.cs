@@ -3,7 +3,9 @@
 
 using System.Reflection;
 using Stride.Core.Assets.Presentation.Components.Properties;
+using Stride.Core.Assets.Presentation.Services;
 using Stride.Core.Assets.Quantum;
+using Stride.Core.Presentation.Collections;
 using Stride.Core.Presentation.Quantum;
 using Stride.Core.Presentation.Services;
 using Stride.Core.Quantum;
@@ -22,6 +24,7 @@ public class AssetViewModel<TAsset> : AssetViewModel, IAssetViewModel<TAsset>
     public AssetViewModel(ConstructorParameters parameters)
         : base(parameters)
     {
+        assetCommands.AddRange(ServiceProvider.Get<IAssetViewModelService>().GetCommandsForAsset<TAsset>());
     }
 
     /// <inheritdoc cref="IAssetViewModel{T}.Asset" />
@@ -34,6 +37,9 @@ public abstract class AssetViewModel : SessionObjectViewModel, IAssetPropertyPro
     private DirectoryBaseViewModel directory;
     private string name;
     private ThumbnailData? thumbnailData;
+
+    // ReSharper disable once InconsistentNaming
+    protected readonly ObservableList<MenuCommandInfo> assetCommands = [];
 
     protected AssetViewModel(ConstructorParameters parameters)
         : base(parameters.Directory.Session)
@@ -50,6 +56,7 @@ public abstract class AssetViewModel : SessionObjectViewModel, IAssetPropertyPro
 
         name = Path.GetFileName(assetItem.Location);
         PropertyGraph = Session.GraphContainer.TryGetGraph(assetItem.Id);
+
         Initializing = false;
     }
 
@@ -66,6 +73,8 @@ public abstract class AssetViewModel : SessionObjectViewModel, IAssetPropertyPro
     public Type AssetType => AssetItem.Asset.GetType();
 
     public AssetId Id => AssetItem.Id;
+
+    public IReadOnlyObservableCollection<MenuCommandInfo> AssetCommands => assetCommands;
 
     /// <summary>
     /// Gets whether the properties of this asset can be edited.

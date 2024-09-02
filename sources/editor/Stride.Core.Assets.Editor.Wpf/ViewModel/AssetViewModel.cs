@@ -7,8 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Media.Imaging;
 using Stride.Core.Assets.Analysis;
 using Stride.Core.Assets.Editor.Components.Properties;
 using Stride.Core.Assets.Editor.Quantum;
@@ -19,7 +17,6 @@ using Stride.Core.Diagnostics;
 using Stride.Core.Extensions;
 using Stride.Core.IO;
 using Stride.Core.Presentation.Collections;
-using Stride.Core.Presentation.Commands;
 using Stride.Core.Presentation.Dirtiables;
 using Stride.Core.Presentation.Quantum;
 using Stride.Core.Presentation.Quantum.ViewModels;
@@ -57,6 +54,8 @@ namespace Stride.Core.Assets.Editor.ViewModel
         public AssetViewModel([NotNull] AssetViewModelConstructionParameters parameters)
             : base(parameters)
         {
+            // TODO: make the view model independent of the view (ie. MenuCommandInfo.Icon and remove this dispatcher call.
+            Dispatcher.Invoke(() => assetCommands.AddRange(ServiceProvider.Get<IAssetViewModelService>().GetCommandsForAsset(this)));
         }
 
         /// <inheritdoc />
@@ -69,11 +68,10 @@ namespace Stride.Core.Assets.Editor.ViewModel
     public abstract class AssetViewModel : SessionObjectViewModel, IChildViewModel, IAssetPropertyProviderViewModel, IDisposable
     {
         protected internal IAssetObjectNode AssetRootNode => PropertyGraph?.RootNode;
-        protected readonly ObservableList<MenuCommandInfo> assetCommands;
+        // ReSharper disable once InconsistentNaming
+        protected readonly ObservableList<MenuCommandInfo> assetCommands = [];
         protected readonly AssetNodeContainer NodeContainer;
         protected readonly bool Initializing;
-        private readonly AnonymousCommand clearArchetypeCommand;
-        private readonly AnonymousCommand createDerivedAssetCommand;
         private Package package;
         private string name;
         private DirectoryBaseViewModel directory;
@@ -105,23 +103,6 @@ namespace Stride.Core.Assets.Editor.ViewModel
             RegisterMemberCollectionForActionStack(nameof(Tags), Tags);
             Tags.CollectionChanged += TagsCollectionChanged;
 
-            assetCommands = new ObservableList<MenuCommandInfo>();
-            createDerivedAssetCommand = new AnonymousCommand(ServiceProvider, CreateDerivedAsset) { IsEnabled = CanDerive };
-            clearArchetypeCommand = new AnonymousCommand(ServiceProvider, ClearArchetype) { IsEnabled = Asset.Archetype != null };
-            // TODO: make the view model independent of the view (ie. MenuCommandInfo.Icon and remove this dispatcher call.
-            Dispatcher.InvokeAsync(() =>
-            {
-                assetCommands.Add(new MenuCommandInfo(ServiceProvider, createDerivedAssetCommand)
-                {
-                    DisplayName = "Create derived asset",
-                    Icon = new Image { Source = new BitmapImage(new Uri("/Stride.Core.Assets.Editor.Wpf;component/Resources/Icons/copy_link-32.png", UriKind.RelativeOrAbsolute)) },
-                });
-                assetCommands.Add(new MenuCommandInfo(ServiceProvider, clearArchetypeCommand)
-                {
-                    DisplayName = "Clear archetype",
-                    Icon = new Image { Source = new BitmapImage(new Uri("/Stride.Core.Assets.Editor.Wpf;component/Resources/Icons/delete_link-32.png", UriKind.RelativeOrAbsolute)) },
-                });
-            }).Forget();
             NodeContainer = parameters.Container;
             PropertyGraph = Session.GraphContainer.TryGetGraph(assetItem.Id);
             if (PropertyGraph != null)
@@ -352,7 +333,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
         [Obsolete]
         protected virtual void OnAssetPropertyChanged(string propertyName, IGraphNode node, NodeIndex index, object oldValue, object newValue)
         {
-            clearArchetypeCommand.IsEnabled = Asset.Archetype != null;
+            ServiceProvider.Get<IAssetViewModelService>().RefreshCommands();
         }
 
         protected virtual IObjectNode GetPropertiesRootNode()
@@ -590,67 +571,6 @@ namespace Stride.Core.Assets.Editor.ViewModel
                     assetItem.Asset.Tags.Add(newItem);
                 }
             }
-        }
-
-        private void CreateDerivedAsset()
-        {
-            if (CanDerive)
-            {
-                var targetDirectory = FindValidCreationLocation(assetItem.Asset.GetType(), directory, Session.CurrentProject);
-
-                if (targetDirectory == null)
-                    return;
-
-                var childName = NamingHelper.ComputeNewName(Name + "-Derived", targetDirectory.Assets, x => x.Name);
-                var childUrl = UFile.Combine(targetDirectory.Path, childName);
-                var childAsset = assetItem.CreateDerivedAsset();
-                var childAssetItem = new AssetItem(childUrl, childAsset);
-                targetDirectory.Package.CreateAsset(targetDirectory, childAssetItem, true, null);
-            }
-        }
-
-        private void ClearArchetype()
-        {
-            using (var transaction = UndoRedoService.CreateTransaction())
-            {
-                // Clear the actual base
-                PropertyGraph.RootNode[nameof(Asset.Archetype)].Update(null);
-
-                // Remove all overridden properties
-                var clearedOverrides = PropertyGraph.ClearAllOverrides();
-                if (!UndoRedoService.UndoRedoInProgress)
-                {
-                    UndoRedoService.PushOperation(new AnonymousDirtyingOperation(Dirtiables, () => RestoreArchetype(clearedOverrides), ClearArchetype));
-                }
-
-                UndoRedoService.SetName(transaction, "Clear archetype");
-            }
-
-            // Force refreshing the property grid
-            Session.AssetViewProperties.RefreshSelectedPropertiesAsync().Forget();
-        }
-
-        private void RestoreArchetype([NotNull] List<AssetPropertyGraph.NodeOverride> clearedOverrides)
-        {
-            AssetViewModel baseViewModel = null;
-            if (Asset.Archetype != null)
-            {
-                baseViewModel = Session.GetAssetById(Asset.Archetype.Id);
-                if (baseViewModel == null)
-                    throw new InvalidOperationException($"Unable to find the base [{Asset.Archetype.Location}] of asset [{Url}].");
-            }
-
-            // Restore all overrides
-            PropertyGraph?.RestoreOverrides(clearedOverrides, baseViewModel?.PropertyGraph);
-
-            // Refresh the base to ensure everything is clean
-            PropertyGraph?.RefreshBase();
-
-            // Reconcile with base. This should not do anything!
-            PropertyGraph?.ReconcileWithBase();
-
-            // Force refreshing the property grid
-            Session.AssetViewProperties.RefreshSelectedPropertiesAsync().Forget();
         }
 
         IChildViewModel IChildViewModel.GetParent()

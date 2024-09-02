@@ -13,10 +13,10 @@ using Stride.Core.Assets.Editor.Annotations;
 using Stride.Core.Assets.Editor.ViewModel;
 using Stride.Core.Diagnostics;
 using Stride.Core.Presentation.Collections;
-using Stride.Core.Presentation.Commands;
 using Stride.Core.Serialization;
 using Stride.Core.Quantum;
 using Stride.Engine;
+using Stride.Core.Assets.Editor.Services;
 
 namespace Stride.Assets.Presentation.ViewModel
 {
@@ -34,8 +34,7 @@ namespace Stride.Assets.Presentation.ViewModel
         public SceneViewModel([NotNull] AssetViewModelConstructionParameters parameters)
             : base(parameters)
         {
-            SetAsDefaultCommand = new AnonymousCommand(ServiceProvider, SetAsDefault);
-            assetCommands.Add(new MenuCommandInfo(ServiceProvider, SetAsDefaultCommand) { DisplayName = "Set as default", Tooltip = "Set as default scene" });
+            // TODO Move implementation to AssetViewModelService
             UpdateCommands();
 
             Session.SessionStateChanged += SessionStateChanged;
@@ -53,9 +52,6 @@ namespace Stride.Assets.Presentation.ViewModel
 
         [CanBeNull]
         public SceneViewModel Parent { get { return parent; } private set { SetValueUncancellable(ref parent, value, ParentPropertyChanged); } }
-
-        [NotNull]
-        internal ICommandBase SetAsDefaultCommand { get; }
 
         /// <summary>
         /// Checks whether this scene can be a parent of the provided <paramref name="child"/> scene.
@@ -380,29 +376,15 @@ namespace Stride.Assets.Presentation.ViewModel
             }
         }
 
+        // FIXME xplat-editor that logic should be globally on the Session or on the AssetViewModelService
         private void SessionStateChanged(object sender, SessionStateChangedEventArgs e)
         {
             UpdateCommands();
         }
-
-        private void SetAsDefault()
-        {
-            if (!SetAsDefaultCommand.IsEnabled)
-                return;
-
-            // TODO: find a better (faster?) way to access the game settings view model
-            var gameSettings = Session.CurrentProject?.AllAssets.OfType<GameSettingsViewModel>().FirstOrDefault();
-            if (gameSettings == null)
-                return;
-            gameSettings.DefaultScene = this;
-        }
-
+        
         private void UpdateCommands()
         {
-            // Cannot set scene as default if
-            // 1. session does not have a current package (not executable game)
-            // 2. scene is not reachable from the main package (not a dependency), i.e. not in Package.AllAssets
-            SetAsDefaultCommand.IsEnabled = Session.CurrentProject?.AllAssets.OfType<SceneViewModel>().Contains(this) ?? false;
+            ServiceProvider.Get<IAssetViewModelService>().RefreshCommands();
         }
     }
 }

@@ -179,6 +179,7 @@ namespace Stride.Assets.Presentation
         public override void InitializeSession(SessionViewModel session)
         {
             session.ServiceProvider.RegisterService(new StrideDialogService());
+            // FIXME xplat-editor merge AssetViewModelService and StrideAssetsViewModel
             var assetsViewModel = new StrideAssetsViewModel(session);
 
             session.AssetViewProperties.RegisterNodePresenterCommand(new FetchEntityCommand());

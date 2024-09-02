@@ -74,3 +74,22 @@ State of view models between xplat version and legacy (Wpf) version
 
 - [ ] Remove any editing capability implemented there and move it to some services/helpers and/or to the `SessionViewModel`.
     - e.g. Asset commands should be implemented elsewhere, so that they can be provided by plugins
+
+*editing capabilities*
+
+- [ ] Rename()/UpdateUrl()/MoveAsset()
+    Can probably stay here for now, but could also be a virtual (default no-op) method, or an event.
+    Could also be delegated to an `IAssetViewModelService` (see if this should be merged with `StrideAssetsViewModel`).
+
+    Pb: UpdateUrl, Rename, MoveAsset as well as equivalent in PackageViewModel have tight dependencies with each other (and call each other leading to potentiel loops)
+    We need to rethink this whole capability in a central place adn only expose the minimum necessary in both AssetViewModel and PackageViewModel.
+    - [ ] IsNewNameValid()
+        Name validity could be dependent on engine implementation or other plugins.
+- [x] AssetsCommands
+    Shouldn't be there, by provided elsewhere (e.g. through a plugin system).
+    At the very most, we could have the collection defined but initialized empty.
+    Then they could be filled by the aforementioned `IAssetViewModelService`.
+    - [x] CreateDerivedAsset()
+    - [x] ClearArchetype()
+    - [x] RestoreArchetype()
+    - [x] Also commands in Model, Scene and SpriteFont

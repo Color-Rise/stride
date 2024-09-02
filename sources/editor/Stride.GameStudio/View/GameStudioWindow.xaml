@@ -83,7 +83,7 @@
           <MenuItem.ItemContainerStyle>
             <Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource {x:Type MenuItem}}" d:DataContext="{d:DesignInstance sd:MenuCommandInfo}">
               <Setter Property="Command" Value="{Binding Command}" />
-              <Setter Property="CommandParameter" Value="{Binding}" />
+              <Setter Property="CommandParameter" Value="{Binding CommandParameter}" />
               <Setter Property="Header" Value="{Binding DisplayName}" />
               <Setter Property="Icon" Value="{Binding Icon}" />
               <Setter Property="IsEnabled" Value="{Binding Command.IsEnabled, Mode=OneWay}" />

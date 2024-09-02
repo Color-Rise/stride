@@ -35,6 +35,12 @@ namespace Stride.Core.Assets.Editor.ViewModel
         public ICommandBase Command { get; }
 
         /// <summary>
+        /// Gets or sets the command parameter.
+        /// </summary>
+        [CanBeNull]
+        public object CommandParameter { get; set; }
+
+        /// <summary>
         /// Gets or sets the name that will be displayed in the UI.
         /// </summary>
         public string DisplayName
