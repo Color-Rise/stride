@@ -11,23 +11,23 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Stride.Core.Annotations;
 using Stride.Core.Assets.Analysis;
 using Stride.Core.Assets.Editor.Components.Properties;
-using Stride.Core.Assets.Editor.Components.Transactions;
 using Stride.Core.Assets.Editor.Components.TemplateDescriptions;
 using Stride.Core.Assets.Editor.Components.TemplateDescriptions.ViewModels;
+using Stride.Core.Assets.Editor.Components.Transactions;
 using Stride.Core.Assets.Editor.Services;
 using Stride.Core.Assets.Editor.Settings;
 using Stride.Core.Assets.Editor.ViewModel.Logs;
 using Stride.Core.Assets.Editor.ViewModel.Progress;
+using Stride.Core.Assets.Presentation.ViewModels;
 using Stride.Core.Assets.Quantum;
 using Stride.Core.Assets.Templates;
-using Stride.Core.Annotations;
-using Stride.Core.Assets.Presentation.ViewModels;
 using Stride.Core.Diagnostics;
 using Stride.Core.Extensions;
 using Stride.Core.IO;
-using Stride.Core.VisualStudio;
+using Stride.Core.Packages;
 using Stride.Core.Presentation.Collections;
 using Stride.Core.Presentation.Commands;
 using Stride.Core.Presentation.Dirtiables;
@@ -36,7 +36,7 @@ using Stride.Core.Presentation.Services;
 using Stride.Core.Presentation.ViewModels;
 using Stride.Core.Presentation.Windows;
 using Stride.Core.Translation;
-using Stride.Core.Packages;
+using Stride.Core.VisualStudio;
 
 namespace Stride.Core.Assets.Editor.ViewModel
 {

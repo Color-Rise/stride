@@ -5,12 +5,12 @@ using System;
 using System.Collections.Generic;
 using Stride.Core.Annotations;
 using Stride.Core.Assets.Analysis;
-using Stride.Core.Assets.Presentation.ViewModels;
+using Stride.Core.Assets.Editor.ViewModel;
 using Stride.Core.Assets.Quantum;
 using Stride.Core.Presentation.Collections;
 using Stride.Core.Presentation.ViewModels;
 
-namespace Stride.Core.Assets.Editor.ViewModel
+namespace Stride.Core.Assets.Presentation.ViewModels
 {
     /// <summary>
     /// Interface for sessions.
