@@ -8,6 +8,7 @@ using Stride.Assets.Effect;
 using Stride.Assets.Materials;
 using Stride.Core.Assets.Editor.Annotations;
 using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core.Assets.Presentation.ViewModels;
 using Stride.Core.Extensions;
 using Stride.Core.Quantum;
 using Stride.Core.Shaders.Ast;

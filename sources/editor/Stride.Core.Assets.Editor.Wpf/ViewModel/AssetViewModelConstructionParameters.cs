@@ -5,7 +5,7 @@ using Stride.Core.Assets.Quantum;
 using Stride.Core.Presentation.ViewModels;
 using Stride.Core.Quantum;
 
-namespace Stride.Core.Assets.Editor.ViewModel
+namespace Stride.Core.Assets.Presentation.ViewModels
 {
     /// <summary>
     /// This class is a container for the parameters needed to initialize the <see cref="AssetViewModel"/> class and its parent classes.

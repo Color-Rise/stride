@@ -23,6 +23,7 @@ using Stride.Core.Assets.Editor.ViewModel.Progress;
 using Stride.Core.Assets.Quantum;
 using Stride.Core.Assets.Templates;
 using Stride.Core.Annotations;
+using Stride.Core.Assets.Presentation.ViewModels;
 using Stride.Core.Diagnostics;
 using Stride.Core.Extensions;
 using Stride.Core.IO;

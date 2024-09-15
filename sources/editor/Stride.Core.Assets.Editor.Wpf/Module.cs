@@ -18,7 +18,7 @@ namespace Stride.Core.Assets.Editor
             // Initialize translation
             TranslationManager.Instance.RegisterProvider(new GettextTranslationProvider());
             // HACK
-            Presentation.Quantum.ViewModels.NodeViewModel.UnsetValue = System.Windows.DependencyProperty.UnsetValue;
+            Core.Presentation.Quantum.ViewModels.NodeViewModel.UnsetValue = System.Windows.DependencyProperty.UnsetValue;
         }
     }
 }

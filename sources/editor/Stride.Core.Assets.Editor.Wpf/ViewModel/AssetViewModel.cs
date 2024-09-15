@@ -13,6 +13,7 @@ using Stride.Core.Assets.Editor.Quantum;
 using Stride.Core.Assets.Editor.Services;
 using Stride.Core.Assets.Quantum;
 using Stride.Core.Annotations;
+using Stride.Core.Assets.Editor.ViewModel;
 using Stride.Core.Diagnostics;
 using Stride.Core.Extensions;
 using Stride.Core.IO;
@@ -24,7 +25,7 @@ using Stride.Core.Presentation.Services;
 using Stride.Core.Quantum;
 using Stride.Core.Translation;
 
-namespace Stride.Core.Assets.Editor.ViewModel
+namespace Stride.Core.Assets.Presentation.ViewModels
 {
     /// <summary>
     /// An interface representing the view model of an <see cref="Asset"/>.

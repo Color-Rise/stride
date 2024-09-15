@@ -17,6 +17,7 @@ using Stride.Core.Serialization;
 using Stride.Core.Quantum;
 using Stride.Engine;
 using Stride.Core.Assets.Editor.Services;
+using Stride.Core.Assets.Presentation.ViewModels;
 
 namespace Stride.Assets.Presentation.ViewModel
 {

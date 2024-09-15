@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using Stride.Core.Assets.Editor.Annotations;
 using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core.Assets.Presentation.ViewModels;
 using Stride.Core.Diagnostics;
 
 #nullable enable

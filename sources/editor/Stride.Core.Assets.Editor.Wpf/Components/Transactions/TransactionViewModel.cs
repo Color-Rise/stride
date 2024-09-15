@@ -2,6 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Linq;
+using Stride.Core.Presentation.Dirtiables;
 using Stride.Core.Transactions;
 using Stride.Core.Presentation.Services;
 using Stride.Core.Presentation.ViewModels;
@@ -60,7 +61,7 @@ namespace Stride.Core.Assets.Editor.Components.Transactions
         /// </summary>
         internal void Refresh()
         {
-            var dirtying = transaction.Operations.SelectMany(Presentation.Dirtiables.DirtiableManager.GetDirtyingOperations);
+            var dirtying = transaction.Operations.SelectMany(DirtiableManager.GetDirtyingOperations);
             IsDone = dirtying.All(x => x.IsDone);
         }
 

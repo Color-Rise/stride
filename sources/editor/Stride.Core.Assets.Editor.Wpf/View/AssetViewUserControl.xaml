@@ -15,6 +15,7 @@
              xmlns:strings="clr-namespace:Stride.Core.Assets.Editor.Resources.Strings"
              xmlns:templateViews="clr-namespace:Stride.Core.Assets.Editor.Components.TemplateDescriptions.Views"
              xmlns:services="clr-namespace:Stride.Core.Assets.Editor.Services"
+             xmlns:viewModels="clr-namespace:Stride.Core.Assets.Presentation.ViewModels"
              mc:Ignorable="d" d:DataContext="{d:DesignInstance viewModel:AssetCollectionViewModel}" Focusable="True"
              d:DesignHeight="300" d:DesignWidth="300" x:Name="AssetView" BorderThickness="1" BorderBrush="{DynamicResource MenuBorderBrush}">
   <DockPanel x:Name="RootContainer">
@@ -92,7 +93,7 @@
                         </StackPanel>
                       </DataTemplate>
                       <!-- asset -->
-                      <DataTemplate DataType="{x:Type viewModel:AssetViewModel}">
+                      <DataTemplate DataType="{x:Type viewModels:AssetViewModel}">
                         <StackPanel>
                           <TextBlock Text="{Binding Url, StringFormat={sd:Localize URL: {0}}}" FontWeight="Bold"/>
                           <TextBlock Text="{Binding TypeDisplayName, StringFormat={sd:Localize Type: {0}}}"/>
@@ -158,7 +159,7 @@
               </ItemsPanelTemplate>
             </controls:EditableContentListBox.ItemsPanel>
             <controls:EditableContentListBox.ItemContainerStyle>
-              <Style TargetType="controls:EditableContentListBoxItem" BasedOn="{StaticResource {x:Type controls:EditableContentListBoxItem}}" d:DataContext="{d:DesignInstance viewModel:AssetViewModel}">
+              <Style TargetType="controls:EditableContentListBoxItem" BasedOn="{StaticResource {x:Type controls:EditableContentListBoxItem}}" d:DataContext="{d:DesignInstance viewModels:AssetViewModel}">
                 <Setter Property="CanEdit" Value="{Binding IsLocked, Converter={sd:InvertBool}}"/>
                 <Setter Property="Background" Value="{StaticResource BackgroundBrush}"/>
                 <Setter Property="sd:Interaction.Behaviors">

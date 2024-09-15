@@ -4,6 +4,7 @@
 using Stride.Assets.SpriteFont;
 using Stride.Core.Assets.Editor.Annotations;
 using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core.Assets.Presentation.ViewModels;
 
 namespace Stride.Assets.Presentation.ViewModel
 {

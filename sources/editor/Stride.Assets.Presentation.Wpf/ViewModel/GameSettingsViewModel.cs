@@ -4,6 +4,7 @@
 using Stride.Core.Assets.Editor.Services;
 using Stride.Core.Assets.Editor.Annotations;
 using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core.Assets.Presentation.ViewModels;
 using Stride.Core.Serialization;
 using Stride.Core.Transactions;
 using Stride.Core.Quantum;
