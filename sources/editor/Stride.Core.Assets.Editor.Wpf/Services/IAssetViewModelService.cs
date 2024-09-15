@@ -3,10 +3,8 @@
 
 using System.Collections.Generic;
 using Stride.Core.Annotations;
-using Stride.Core.Assets.Editor.ViewModel;
-using Stride.Core.Assets.Presentation.ViewModels;
 
-namespace Stride.Core.Assets.Editor.Services
+namespace Stride.Core.Assets.Presentation.ViewModels
 {
     public interface IAssetViewModelService
     {

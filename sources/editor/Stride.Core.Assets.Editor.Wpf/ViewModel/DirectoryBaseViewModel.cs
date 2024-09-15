@@ -1,18 +1,19 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Stride.Core.Assets.Editor.View.Behaviors;
 using Stride.Core.Annotations;
-using Stride.Core.Assets.Presentation.ViewModels;
+using Stride.Core.Assets.Editor.View.Behaviors;
+using Stride.Core.Assets.Editor.ViewModel;
 using Stride.Core.Extensions;
 using Stride.Core.Presentation.Collections;
 using Stride.Core.Presentation.Dirtiables;
 using Stride.Core.Presentation.ViewModels;
 
-namespace Stride.Core.Assets.Editor.ViewModel
+namespace Stride.Core.Assets.Presentation.ViewModels
 {
     public abstract class DirectoryBaseViewModel : SessionObjectViewModel, IChildViewModel, IAddChildViewModel
     {

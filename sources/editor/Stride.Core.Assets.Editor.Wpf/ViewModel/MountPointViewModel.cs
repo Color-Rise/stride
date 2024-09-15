@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Stride.Core.Presentation.Dirtiables;
 
-namespace Stride.Core.Assets.Editor.ViewModel
+namespace Stride.Core.Assets.Presentation.ViewModels
 {
     public abstract class MountPointViewModel : DirectoryBaseViewModel
     {

@@ -4,11 +4,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Stride.Core.Assets.Editor.ViewModel;
 using Stride.Core.Presentation.Collections;
 using Stride.Core.Presentation.Dirtiables;
 using Stride.Core.Presentation.ViewModels;
 
-namespace Stride.Core.Assets.Editor.ViewModel
+namespace Stride.Core.Assets.Presentation.ViewModels
 {
     public interface ICategoryViewModel : IDirtiable, IIsEditableViewModel
     {

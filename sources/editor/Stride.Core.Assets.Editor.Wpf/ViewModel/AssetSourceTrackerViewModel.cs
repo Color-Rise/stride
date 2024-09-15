@@ -21,7 +21,7 @@ using Stride.Core.Presentation.ViewModels;
 
 namespace Stride.Core.Assets.Editor.ViewModel
 {
-    public class AssetSourceTrackerViewModel : DispatcherViewModel
+    public class AssetSourceTrackerViewModel : DispatcherViewModel, IAssetSourceTrackerViewModel
     {
         private readonly PackageSession session;
         private readonly SessionViewModel sessionViewModel;
@@ -71,7 +71,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
             return session.SourceTracker.GetCurrentHash(file);
         }
 
-        internal void UpdateAssetStatus(AssetViewModel asset)
+        public void UpdateAssetStatus(AssetViewModel asset)
         {
             if (asset.Sources.NeedUpdateFromSource && !asset.IsDeleted)
                 assetsToUpdate.Add(asset);

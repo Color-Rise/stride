@@ -3,9 +3,10 @@
 using System;
 using System.Linq;
 using Stride.Core.Annotations;
+using Stride.Core.Assets.Editor.ViewModel;
 using Stride.Core.IO;
 
-namespace Stride.Core.Assets.Editor.ViewModel
+namespace Stride.Core.Assets.Presentation.ViewModels
 {
     public class ProjectCodeViewModel : MountPointViewModel
     {
@@ -39,7 +40,6 @@ namespace Stride.Core.Assets.Editor.ViewModel
         }
     }
 
-    // TODO: For the moment we consider that a project has only a single parent profile. Sharing project in several profile is not supported.
     public class ProjectViewModel : PackageViewModel
     {
         private bool isCurrentProject;

@@ -6,11 +6,12 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Stride.Core.Assets.Presentation.ViewModels;
 using Stride.Core.Storage;
 using Stride.Core.Presentation.Services;
 using Stride.Core.Presentation.ViewModels;
 
-namespace Stride.Core.Assets.Editor.Services
+namespace Stride.Core.Assets.Presentation.ViewModels
 {
     public abstract class ThumbnailData : ViewModelBase
     {
@@ -58,7 +59,10 @@ namespace Stride.Core.Assets.Editor.Services
         /// </summary>
         protected abstract void FreeBuildingResources();
     }
+}
 
+namespace Stride.Core.Assets.Editor.Services
+{
     /// <summary>
     /// Generic ImageSource resources, DrawingImage vectors, etc. support for thumbnails.
     /// </summary>

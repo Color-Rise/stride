@@ -10,14 +10,12 @@ using Stride.Assets.Entities;
 using Stride.Core.Annotations;
 using Stride.Core.Assets;
 using Stride.Core.Assets.Editor.Annotations;
-using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core.Assets.Presentation.ViewModels;
 using Stride.Core.Diagnostics;
 using Stride.Core.Presentation.Collections;
-using Stride.Core.Serialization;
 using Stride.Core.Quantum;
+using Stride.Core.Serialization;
 using Stride.Engine;
-using Stride.Core.Assets.Editor.Services;
-using Stride.Core.Assets.Presentation.ViewModels;
 
 namespace Stride.Assets.Presentation.ViewModel
 {

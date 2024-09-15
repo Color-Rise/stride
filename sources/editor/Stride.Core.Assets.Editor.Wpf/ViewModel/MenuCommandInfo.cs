@@ -6,7 +6,7 @@ using Stride.Core.Annotations;
 using Stride.Core.Presentation.Commands;
 using Stride.Core.Presentation.ViewModels;
 
-namespace Stride.Core.Assets.Editor.ViewModel
+namespace Stride.Core.Assets.Presentation.ViewModels
 {
     /// <summary>
     /// Wrapper for <see cref="ICommandBase"/> with additional information, best fitted for menu command (gesture, tooltip...).

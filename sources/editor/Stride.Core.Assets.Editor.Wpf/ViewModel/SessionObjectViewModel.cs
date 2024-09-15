@@ -1,16 +1,17 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
-using Stride.Core.Assets.Editor.Services;
-using Stride.Core.Assets.Editor.View.Behaviors;
 using Stride.Core.Annotations;
+using Stride.Core.Assets.Editor.View.Behaviors;
+using Stride.Core.Assets.Editor.ViewModel;
 using Stride.Core.Extensions;
 using Stride.Core.IO;
-using Stride.Core.Translation;
 using Stride.Core.Presentation.ViewModels;
+using Stride.Core.Translation;
 
-namespace Stride.Core.Assets.Editor.ViewModel
+namespace Stride.Core.Assets.Presentation.ViewModels
 {
     public abstract class SessionObjectViewModel : DirtiableEditableViewModel, IAddChildViewModel, ISessionObjectViewModel
     {

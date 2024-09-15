@@ -3,35 +3,34 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Stride.Core.Annotations;
 using Stride.Core.Assets.Analysis;
 using Stride.Core.Assets.Diagnostics;
 using Stride.Core.Assets.Editor.Components.Properties;
 using Stride.Core.Assets.Editor.Components.TemplateDescriptions;
 using Stride.Core.Assets.Editor.Services;
+using Stride.Core.Assets.Editor.ViewModel;
 using Stride.Core.Assets.Editor.ViewModel.Logs;
 using Stride.Core.Assets.Editor.ViewModel.Progress;
 using Stride.Core.Assets.Templates;
-using Stride.Core.Annotations;
 using Stride.Core.Diagnostics;
 using Stride.Core.Extensions;
 using Stride.Core.IO;
+using Stride.Core.Packages;
 using Stride.Core.Presentation.Collections;
 using Stride.Core.Presentation.Commands;
-using Stride.Core.Presentation.Dirtiables;
 using Stride.Core.Presentation.Quantum;
 using Stride.Core.Presentation.Services;
+using Stride.Core.Presentation.ViewModels;
 using Stride.Core.Quantum;
 using Stride.Core.Translation;
-using System.IO;
-using Stride.Core.Assets.Presentation.ViewModels;
-using Stride.Core.Packages;
-using Stride.Core.Presentation.ViewModels;
 
-namespace Stride.Core.Assets.Editor.ViewModel
+namespace Stride.Core.Assets.Presentation.ViewModels
 {
     public class PackageViewModel : SessionObjectViewModel, IComparable<PackageViewModel>, IAddChildViewModel, IChildViewModel, IPropertyProviderViewModel
     {
@@ -469,7 +468,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
                     ServiceProvider.Get<IEditorDialogService>().ShowProgressWindow(workProgress, 500);
 
-                	await Task.Run(() =>
+                    await Task.Run(() =>
                     {
                         try
                         {
@@ -771,6 +770,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
             throw new InvalidOperationException("Unable to sort the given items for the Content collection of PackageViewModel");
         }
     }
+
     public abstract class PickablePackageViewModel : DispatcherViewModel
     {
         protected PickablePackageViewModel([NotNull] IViewModelServiceProvider serviceProvider)
