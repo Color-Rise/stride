@@ -135,8 +135,7 @@ public class PackageViewModel : SessionObjectViewModel, IComparable<PackageViewM
             {
                 directory = GetOrCreateAssetDirectory(url.GetFullDirectory());
             }
-            var assetViewModel = CreateAsset(asset, directory);
-            directory.AddAsset(assetViewModel);
+            CreateAsset(asset, directory);
 
             progress++;
         }
@@ -204,7 +203,9 @@ public class PackageViewModel : SessionObjectViewModel, IComparable<PackageViewM
         {
             assetViewModelType = assetViewModelType.MakeGenericType(assetItem.Asset.GetType());
         }
-        return (AssetViewModel)Activator.CreateInstance(assetViewModelType, new ConstructorParameters(assetItem, directory, false))!;
+        var assetViewModel = (AssetViewModel)Activator.CreateInstance(assetViewModelType, new ConstructorParameters(assetItem, directory, false))!;
+        directory.AddAsset(assetViewModel, false);
+        return assetViewModel;
     }
 
     private void FillRootAssetCollection()

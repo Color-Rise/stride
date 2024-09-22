@@ -1,23 +1,36 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
+using System.Collections.Specialized;
 using System.Reflection;
 using Stride.Core.Assets.Presentation.Components.Properties;
+using Stride.Core.Assets.Presentation.Quantum;
 using Stride.Core.Assets.Presentation.Services;
 using Stride.Core.Assets.Quantum;
 using Stride.Core.Presentation.Collections;
+using Stride.Core.Presentation.Dirtiables;
 using Stride.Core.Presentation.Quantum;
-using Stride.Core.Presentation.Services;
 using Stride.Core.Quantum;
 
 namespace Stride.Core.Assets.Presentation.ViewModels;
 
+/// <summary>
+/// An interface representing the view model of an <see cref="Asset"/>.
+/// </summary>
+/// <typeparam name="TAsset">The type of asset represented by this view model.</typeparam>
 public interface IAssetViewModel<out TAsset>
     where TAsset : Asset
 {
+    /// <summary>
+    /// The asset object related to this view model.
+    /// </summary>
     TAsset Asset { get; }
 }
 
+/// <summary>
+/// A generic version of the <see cref="AssetViewModel"/> class that allows to access directly the proper type of asset represented by this view model.
+/// </summary>
+/// <typeparam name="TAsset">The type of asset represented by this view model.</typeparam>
 public class AssetViewModel<TAsset> : AssetViewModel, IAssetViewModel<TAsset>
     where TAsset : Asset
 {
@@ -31,7 +44,7 @@ public class AssetViewModel<TAsset> : AssetViewModel, IAssetViewModel<TAsset>
     public override TAsset Asset => (TAsset)base.Asset;
 }
 
-public abstract class AssetViewModel : SessionObjectViewModel, IAssetPropertyProviderViewModel
+public abstract class AssetViewModel : SessionObjectViewModel, IChildViewModel, IAssetPropertyProviderViewModel
 {
     private AssetItem assetItem;
     private DirectoryBaseViewModel directory;
@@ -55,7 +68,18 @@ public abstract class AssetViewModel : SessionObjectViewModel, IAssetPropertyPro
         InitialUndelete(parameters.CanUndoRedoCreation);
 
         name = Path.GetFileName(assetItem.Location);
+
+        Tags.AddRange(assetItem.Asset.Tags);
+        RegisterMemberCollectionForActionStack(nameof(Tags), Tags);
+        Tags.CollectionChanged += TagsCollectionChanged;
+
         PropertyGraph = Session.GraphContainer.TryGetGraph(assetItem.Id);
+        if (PropertyGraph is not null)
+        {
+            PropertyGraph.BaseContentChanged += BaseContentChanged;
+            PropertyGraph.Changed += AssetPropertyChanged;
+            PropertyGraph.ItemChanged += AssetPropertyChanged;
+        }
 
         Initializing = false;
     }
@@ -65,7 +89,7 @@ public abstract class AssetViewModel : SessionObjectViewModel, IAssetPropertyPro
     public AssetItem AssetItem
     {
         get => assetItem;
-        set => SetValue(ref assetItem, value);
+        set => SetValueUncancellable(ref assetItem, value);
     }
 
     public IAssetObjectNode? AssetRootNode => PropertyGraph?.RootNode;
@@ -87,6 +111,8 @@ public abstract class AssetViewModel : SessionObjectViewModel, IAssetPropertyPro
         private set => SetValue(ref directory, value);
     }
 
+    public override IEnumerable<IDirtiable> Dirtiables => base.Dirtiables.Concat(Directory.Dirtiables);
+
     /// <summary>
     /// Gets the dependencies of this asset.
     /// </summary>
@@ -96,7 +122,7 @@ public abstract class AssetViewModel : SessionObjectViewModel, IAssetPropertyPro
     public override string Name
     {
         get => name;
-        set => SetValue(ref name, value); // TODO rename
+        set => SetValue(ServiceProvider.Get<IAssetViewModelService>().RenameAsset(this, value), () => name = value);
     }
 
     public AssetPropertyGraph? PropertyGraph { get; }
@@ -107,12 +133,17 @@ public abstract class AssetViewModel : SessionObjectViewModel, IAssetPropertyPro
     public AssetSourcesViewModel Sources { get; }
 
     /// <summary>
+    /// Gets or sets the collection of tags associated to this asset.
+    /// </summary>
+    public ObservableList<string> Tags { get; } = [];
+
+    /// <summary>
     /// The <see cref="ThumbnailData"/> associated to this <see cref="AssetViewModel"/>.
     /// </summary>
     public ThumbnailData? ThumbnailData
     {
         get => thumbnailData;
-        set => SetValue(ref thumbnailData, value);
+        set => SetValueUncancellable(ref thumbnailData, value);
     }
 
     /// <summary>
@@ -125,9 +156,16 @@ public abstract class AssetViewModel : SessionObjectViewModel, IAssetPropertyPro
     /// </summary>
     public string Url => AssetItem.Location;
 
-    protected bool Initializing { get; private set; }
+    protected bool Initializing { get; }
 
     protected Package Package => Directory.Package.Package;
+
+    public override void Destroy()
+    {
+        EnsureNotDestroyed(nameof(AssetViewModel));
+        PropertyGraph?.Dispose();
+        base.Destroy();
+    }
 
     /// <summary>
     /// Initializes this asset. This method is guaranteed to be called once every other assets are loaded in the session.
@@ -150,6 +188,19 @@ public abstract class AssetViewModel : SessionObjectViewModel, IAssetPropertyPro
     protected virtual IObjectNode? GetPropertiesRootNode()
     {
         return AssetRootNode;
+    }
+
+    [Obsolete]
+    protected virtual void OnAssetPropertyChanged(string? propertyName, IGraphNode node, NodeIndex index, object oldValue, object newValue)
+    {
+        ServiceProvider.Get<IAssetViewModelService>().RefreshCommands();
+    }
+
+    protected override void OnDirtyFlagSet()
+    {
+        // We write the dirty flag of the asset item even if it has not changed,
+        // since it triggers some processes we want to do at each modification.
+        assetItem.IsDirty = IsDirty;
     }
 
     protected virtual bool ShouldConstructPropertyItem(IObjectNode collection, NodeIndex index) => true;
@@ -193,6 +244,75 @@ public abstract class AssetViewModel : SessionObjectViewModel, IAssetPropertyPro
     {
         var result = new HashSet<AssetViewModel>(assets.SelectMany(x => x.Dependencies.RecursiveReferencedAssets));
         return result;
+    }
+
+    // FIXME xplat-editor revisit this. Should it be implemented here or in an editor class?
+    private void AssetPropertyChanged(object? sender, INodeChangeEventArgs e)
+    {
+        // Ignore asset property change if we are fixing up assets.
+        if (Session.IsInFixupAssetContext)
+            return;
+
+        var index = (e as ItemChangeEventArgs)?.Index ?? NodeIndex.Empty;
+        var assetNodeChange = (IAssetNodeChangeEventArgs)e;
+        var node = (IAssetNode)e.Node;
+        var memberName = (node as IMemberNode)?.Name;
+        if (UndoRedoService?.UndoRedoInProgress == false)
+        {
+            // Don't create action items if the change comes from the Base
+            if (PropertyGraph?.UpdatingPropertyFromBase == false)
+            {
+                var overrideChange = new AssetContentValueChangeOperation(node, e.ChangeType, index, e.OldValue, e.NewValue, assetNodeChange.PreviousOverride, assetNodeChange.NewOverride, assetNodeChange.ItemId, Dirtiables);
+                UndoRedoService.PushOperation(overrideChange);
+            }
+        }
+
+        OnAssetPropertyChanged(memberName, node, index, e.OldValue, e.NewValue);
+    }
+
+    private void BaseContentChanged(INodeChangeEventArgs e, IGraphNode node)
+    {
+        // Ignore base change if we are fixing up assets.
+        if (Session.IsInFixupAssetContext)
+            return;
+
+        if (UndoRedoService?.UndoRedoInProgress == false)
+        {
+            // Ensure this asset will be marked as dirty
+            UndoRedoService.PushOperation(new EmptyDirtyingOperation(Dirtiables));
+        }
+    }
+
+    private void TagsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        if (e.Action == NotifyCollectionChangedAction.Reset)
+        {
+            throw new InvalidOperationException("Reset is not supported on the tag collection.");
+        }
+        if (e.OldItems != null)
+        {
+            foreach (string oldItem in e.OldItems)
+            {
+                assetItem.Asset.Tags.Remove(oldItem);
+            }
+        }
+        if (e.NewItems != null)
+        {
+            foreach (string newItem in e.NewItems)
+            {
+                assetItem.Asset.Tags.Add(newItem);
+            }
+        }
+    }
+
+    IChildViewModel IChildViewModel.GetParent()
+    {
+        return Directory;
+    }
+
+    string IChildViewModel.GetName()
+    {
+        return Name;
     }
 
     AssetViewModel IAssetPropertyProviderViewModel.RelatedAsset => this;

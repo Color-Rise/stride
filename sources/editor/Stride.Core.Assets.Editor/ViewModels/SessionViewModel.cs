@@ -153,13 +153,15 @@ public sealed partial class SessionViewModel : DispatcherViewModel, ISessionView
 
     public AssetPropertyGraphContainer GraphContainer { get; }
 
+    public bool IsInFixupAssetContext { get; set; }
+
     public IMainViewModel Main { get; }
 
     public IReadOnlyDictionary<string, PackageCategoryViewModel> PackageCategories => packageCategories;
 
     public UFile SolutionPath => session.SolutionPath;
 
-    public IAssetSourceTrackerViewModel SourceTracker { get; private set; }
+    public IAssetSourceTrackerViewModel? SourceTracker { get; private set; }
 
     public ThumbnailsViewModel Thumbnails { get; }
 

@@ -7,7 +7,7 @@ using Stride.Core.Presentation.Collections;
 
 namespace Stride.Core.Assets.Presentation.ViewModels;
 
-public abstract class DirectoryBaseViewModel : SessionObjectViewModel
+public abstract class DirectoryBaseViewModel : SessionObjectViewModel, IChildViewModel
 {
     public const string Separator = "/";
     private readonly AutoUpdatingSortedObservableCollection<DirectoryViewModel> subDirectories = new(CompareDirectories);
@@ -25,11 +25,11 @@ public abstract class DirectoryBaseViewModel : SessionObjectViewModel
     /// Gets the package containing this directory.
     /// </summary>
     public abstract PackageViewModel Package { get; }
-    
+
     /// <summary>
     /// Gets or sets the parent directory of this directory.
     /// </summary>
-    public abstract DirectoryBaseViewModel Parent { get; set; }
+    public abstract DirectoryBaseViewModel? Parent { get; set; }
 
     /// <summary>
     /// Gets the path of this directory in its current package.
@@ -65,9 +65,19 @@ public abstract class DirectoryBaseViewModel : SessionObjectViewModel
         return result;
     }
 
-    internal void AddAsset(AssetViewModel asset)
+    internal void AddAsset(AssetViewModel asset, bool canUndoRedo)
     {
-        assets.Add(asset);
+        if (canUndoRedo)
+        {
+            assets.Add(asset);
+        }
+        else
+        {
+            using (SuspendNotificationForCollectionChange(nameof(Assets)))
+            {
+                assets.Add(asset);
+            }
+        }
     }
 
     internal void RemoveAsset(AssetViewModel asset)
@@ -84,5 +94,15 @@ public abstract class DirectoryBaseViewModel : SessionObjectViewModel
             return string.Compare(x.Name, y.Name, StringComparison.OrdinalIgnoreCase);
 
         return x == null ? -1 : 1;
+    }
+
+    IChildViewModel IChildViewModel.GetParent()
+    {
+        return (IChildViewModel?)Parent ?? Package;
+    }
+
+    string IChildViewModel.GetName()
+    {
+        return Name;
     }
 }

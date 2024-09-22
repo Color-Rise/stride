@@ -82,7 +82,7 @@ State of view models between xplat version and legacy (Wpf) version
     Could also be delegated to an `IAssetViewModelService` (see if this should be merged with `StrideAssetsViewModel`).
 
     Pb: UpdateUrl, Rename, MoveAsset as well as equivalent in PackageViewModel have tight dependencies with each other (and call each other leading to potentiel loops)
-    We need to rethink this whole capability in a central place adn only expose the minimum necessary in both AssetViewModel and PackageViewModel.
+    We need to rethink this whole capability in a central place and only expose the minimum necessary in both AssetViewModel and PackageViewModel.
     - [ ] IsNewNameValid()
         Name validity could be dependent on engine implementation or other plugins.
 - [x] AssetsCommands

@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using Stride.Assets.Models;
@@ -54,7 +55,7 @@ namespace Stride.Assets.Presentation.Services
             this.serviceProvider = serviceProvider;
 
             clearArchetypeCommand = new AnonymousCommand<AssetViewModel>(serviceProvider, ClearArchetype, x => x?.Asset.Archetype is not null);
-            createDerivedAssetCommand = new AnonymousCommand<AssetViewModel>(serviceProvider, CreateDerivedAsset, x => x?.CanDerive ?? false);
+            createDerivedAssetCommand = new AnonymousCommand<AssetViewModel>(serviceProvider, CreateDerivedAsset, CanDerive);
 
             createSkeletonCommand = new AnonymousTaskCommand<ModelViewModel>(serviceProvider, CreateSkeleton);
 
@@ -80,7 +81,7 @@ namespace Stride.Assets.Presentation.Services
                     Icon = new Image { Source = new BitmapImage(new Uri("/Stride.Core.Assets.Editor.Wpf;component/Resources/Icons/delete_link-32.png", UriKind.RelativeOrAbsolute)) },
                 },
             };
-            if (asset.CanDerive)
+            if (CanDerive(asset))
             {
                 commands.Add(new MenuCommandInfo(serviceProvider, createDerivedAssetCommand)
                 {
@@ -141,9 +142,14 @@ namespace Stride.Assets.Presentation.Services
             generatePrecompiledFontCommand.IsEnabled ^= true;
         }
 
+        private static bool CanDerive([CanBeNull] AssetViewModel asset)
+        {
+            return asset?.AssetType.GetCustomAttribute<AssetDescriptionAttribute>()?.AllowArchetype ?? false;
+        }
+
         private static void CreateDerivedAsset([NotNull] AssetViewModel asset)
         {
-            if (asset.CanDerive)
+            if (CanDerive(asset))
             {
                 var targetDirectory = AssetViewModel.FindValidCreationLocation(asset.AssetItem.Asset.GetType(), asset.Directory, asset.Session.CurrentProject);
 

@@ -36,7 +36,7 @@ namespace Stride.Core.Assets.Presentation.ViewModels
         where TAsset : Asset
     {
         /// <summary>
-        /// Gets the asset object related to this view model.
+        /// The asset object related to this view model.
         /// </summary>
         [NotNull]
         TAsset Asset { get; }
@@ -60,8 +60,8 @@ namespace Stride.Core.Assets.Presentation.ViewModels
             Dispatcher.Invoke(() => assetCommands.AddRange(ServiceProvider.Get<IAssetViewModelService>().GetCommandsForAsset(this)));
         }
 
-        /// <inheritdoc />
-        public new TAsset Asset => (TAsset)base.Asset;
+        /// <inheritdoc cref="IAssetViewModel{T}.Asset" />
+        public override TAsset Asset => (TAsset)base.Asset;
     }
 
     /// <summary>
@@ -163,7 +163,7 @@ namespace Stride.Core.Assets.Presentation.ViewModels
         /// Gets the asset object related to this view model.
         /// </summary>
         [NotNull]
-        public Asset Asset => AssetItem.Asset;
+        public virtual Asset Asset => AssetItem.Asset;
 
         public AssetPropertyGraph PropertyGraph { get; }
 
@@ -200,9 +200,7 @@ namespace Stride.Core.Assets.Presentation.ViewModels
         /// <summary>
         /// Gets whether this asset has been upgraded while being loaded.
         /// </summary>
-        public bool HasBeenUpgraded { get; }
-
-        public bool CanDerive => AssetType.GetCustomAttribute<AssetDescriptionAttribute>()?.AllowArchetype ?? false;
+        public bool HasBeenUpgraded { get; } // FIXME xplat-editor there is no need to keep that information on the AssetViewModel, it should be on the process that does the upgrading
 
         public IReadOnlyObservableCollection<MenuCommandInfo> AssetCommands => assetCommands;
 

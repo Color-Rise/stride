@@ -31,7 +31,9 @@ public sealed class DirectoryViewModel : DirectoryBaseViewModel
     public override DirectoryBaseViewModel Parent
     {
         get => parent;
+#pragma warning disable CS8765 // Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes).
         set => SetValue(ref parent, value);
+#pragma warning restore CS8765 // Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes).
     }
 
     /// <summary>

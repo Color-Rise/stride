@@ -26,11 +26,13 @@ public interface ISessionViewModel : IDispatcherViewModel, IViewModelBase
 
     AssetPropertyGraphContainer GraphContainer { get; }
 
+    bool IsInFixupAssetContext { get; }
+
     IObservableCollection<PackageViewModel> LocalPackages => PackageCategories[LocalPackageCategoryName].Content;
 
     IReadOnlyDictionary<string, PackageCategoryViewModel> PackageCategories { get; }
 
-    IAssetSourceTrackerViewModel SourceTracker { get; }
+    IAssetSourceTrackerViewModel? SourceTracker { get; }
 
     IObservableCollection<PackageViewModel> StorePackages => PackageCategories[StorePackageCategoryName].Content;
 
