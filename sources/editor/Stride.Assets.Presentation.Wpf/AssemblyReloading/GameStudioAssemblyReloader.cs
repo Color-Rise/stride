@@ -25,6 +25,7 @@ using Stride.Core.Yaml;
 using Stride.Core.Yaml.Events;
 using Stride.Core.Yaml.Serialization;
 using Stride.Core.Presentation.Dirtiables;
+using Stride.Core.Presentation.Quantum;
 using Stride.Core.Presentation.Services;
 using Stride.Core.Quantum;
 

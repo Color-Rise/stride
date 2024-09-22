@@ -8,6 +8,7 @@ using Stride.Core.Assets.Quantum;
 using Stride.Core.Reflection;
 using Stride.Core.Transactions;
 using Stride.Core.Presentation.Dirtiables;
+using Stride.Core.Presentation.Quantum;
 using Stride.Core.Quantum;
 
 namespace Stride.Core.Assets.Editor.Quantum
