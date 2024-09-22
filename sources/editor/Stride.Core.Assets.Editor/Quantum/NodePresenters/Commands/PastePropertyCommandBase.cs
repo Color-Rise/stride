@@ -77,7 +77,7 @@ public abstract class PastePropertyCommandBase : NodePresenterCommandBase
             return;
 
         var actionService = asset.UndoRedoService;
-        using var transaction = actionService.CreateTransaction();
+        using var transaction = actionService?.CreateTransaction();
 
         // FIXME: for now we only handle one result item
         var item = result.Items[0];
@@ -86,7 +86,7 @@ public abstract class PastePropertyCommandBase : NodePresenterCommandBase
 
         var propertyContainer = new PropertyContainer { { AssetPropertyPasteProcessor.IsReplaceKey, replace } };
         await (item.Processor?.Paste(item, asset.PropertyGraph, ref nodeAccessor, ref propertyContainer) ?? Task.CompletedTask);
-        actionService.SetName(transaction, replace ? "Replace property" : "Paste property");
+        actionService?.SetName(transaction!, replace ? "Replace property" : "Paste property");
     }
 
     private static bool IsInReadOnlyCollection(INodePresenter? nodePresenter)

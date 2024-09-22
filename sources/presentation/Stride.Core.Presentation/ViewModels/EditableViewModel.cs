@@ -45,8 +45,7 @@ public abstract class EditableViewModel : DispatcherViewModel, IIsEditableViewMo
     /// <summary>
     /// Gets the undo/redo service used by this view model.
     /// </summary>
-    // FIXME xplat-editor should be nullable (i.e. service not guaranteed to exist)
-    public IUndoRedoService UndoRedoService => ServiceProvider.Get<IUndoRedoService>();
+    public IUndoRedoService? UndoRedoService => ServiceProvider.TryGet<IUndoRedoService>();
 
     protected void RegisterMemberCollectionForActionStack(string name, INotifyCollectionChanged collection)
     {
@@ -196,7 +195,7 @@ public abstract class EditableViewModel : DispatcherViewModel, IIsEditableViewMo
             {
                 var propertyInfo = GetType().GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public);
                 var postEditValue = propertyInfo?.GetValue(this);
-                if (!UndoRedoService.UndoRedoInProgress && !Equals(preEditValue, postEditValue))
+                if (UndoRedoService?.UndoRedoInProgress == false && !Equals(preEditValue, postEditValue))
                 {
                     var operation = CreatePropertyChangeOperation(displayName, propertyName, preEditValue);
                     UndoRedoService.PushOperation(operation);
@@ -209,14 +208,14 @@ public abstract class EditableViewModel : DispatcherViewModel, IIsEditableViewMo
     protected virtual Operation CreatePropertyChangeOperation(string displayName, string propertyName, object preEditValue)
     {
         var operation = new PropertyChangeOperation(propertyName, this, preEditValue, Dirtiables);
-        UndoRedoService.SetName(operation, displayName);
+        UndoRedoService?.SetName(operation, displayName);
         return operation;
     }
 
     protected virtual Operation CreateCollectionChangeOperation(string displayName, IList list, NotifyCollectionChangedEventArgs args)
     {
         var operation = new CollectionChangeOperation(list, args, Dirtiables);
-        UndoRedoService.SetName(operation, displayName);
+        UndoRedoService?.SetName(operation, displayName);
         return operation;
     }
 
@@ -228,7 +227,7 @@ public abstract class EditableViewModel : DispatcherViewModel, IIsEditableViewMo
         if (EqualityComparer<T>.Default.Equals(field, value) == false)
         {
             ITransaction? transaction = null;
-            if (!UndoRedoService.UndoRedoInProgress && createTransaction)
+            if (UndoRedoService?.UndoRedoInProgress == false && createTransaction)
             {
                 transaction = UndoRedoService.CreateTransaction();
                 var concatPropertyName = string.Join(", ", propertyNames.Where(x => !uncancellableChanges.Contains(x)).Select(s => $"'{s}'"));
@@ -240,7 +239,7 @@ public abstract class EditableViewModel : DispatcherViewModel, IIsEditableViewMo
             }
             finally
             {
-                if (!UndoRedoService.UndoRedoInProgress && createTransaction)
+                if (UndoRedoService?.UndoRedoInProgress == false && createTransaction)
                 {
                     if (transaction == null)
                         throw new InvalidOperationException("A transaction failed to be created.");
@@ -259,7 +258,7 @@ public abstract class EditableViewModel : DispatcherViewModel, IIsEditableViewMo
         if (hasChangedFunction == null || hasChangedFunction())
         {
             ITransaction? transaction = null;
-            if (!UndoRedoService.UndoRedoInProgress && createTransaction)
+            if (UndoRedoService?.UndoRedoInProgress == false && createTransaction)
             {
                 transaction = UndoRedoService.CreateTransaction();
                 var concatPropertyName = string.Join(", ", propertyNames.Where(x => !uncancellableChanges.Contains(x)).Select(s => $"'{s}'"));
@@ -271,7 +270,7 @@ public abstract class EditableViewModel : DispatcherViewModel, IIsEditableViewMo
             }
             finally
             {
-                if (!UndoRedoService.UndoRedoInProgress && createTransaction)
+                if (UndoRedoService?.UndoRedoInProgress == false && createTransaction)
                 {
                     if (transaction == null)
                         throw new InvalidOperationException("A transaction failed to be created.");
@@ -292,7 +291,7 @@ public abstract class EditableViewModel : DispatcherViewModel, IIsEditableViewMo
             if (toIListMethod != null)
                 list = (IList?)toIListMethod.Invoke(sender, Array.Empty<object>());
         }
-        if (!UndoRedoService.UndoRedoInProgress && !suspendedCollections.Contains(collectionName))
+        if (UndoRedoService?.UndoRedoInProgress == false && !suspendedCollections.Contains(collectionName))
         {
             using (UndoRedoService.CreateTransaction())
             {
