@@ -83,9 +83,11 @@ namespace Stride.Core.Assets.Quantum
         public abstract bool IsChildPartReference(IGraphNode node, NodeIndex index);
 
         /// <inheritdoc/>
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            base.Dispose();
+            base.Dispose(disposing);
+            if (!disposing) return;
+
             var rootPartsNode = HierarchyNode[nameof(AssetCompositeHierarchyData<TAssetPartDesign, TAssetPart>.RootParts)].Target;
             rootPartsNode.ItemChanged -= RootPartsChanged;
             registeredChildParts.ToList().ForEach(UnregisterChildPartNode);

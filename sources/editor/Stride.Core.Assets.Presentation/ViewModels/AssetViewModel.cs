@@ -163,6 +163,7 @@ public abstract class AssetViewModel : SessionObjectViewModel, IChildViewModel, 
     public override void Destroy()
     {
         EnsureNotDestroyed(nameof(AssetViewModel));
+        Session.GraphContainer.UnregisterGraph(assetItem.Id);
         PropertyGraph?.Dispose();
         base.Destroy();
     }
