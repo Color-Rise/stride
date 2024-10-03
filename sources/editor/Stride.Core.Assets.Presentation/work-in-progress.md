@@ -93,3 +93,28 @@ State of view models between xplat version and legacy (Wpf) version
     - [x] ClearArchetype()
     - [x] RestoreArchetype()
     - [x] Also commands in Model, Scene and SpriteFont
+
+----
+
+2024-10-03 AssetViewModel lifecycle
+
+- [ ] What creates and initializes the asset viewmodels?
+  Currenty it is done in PackageViewModel, which doesn't seem like the right place
+    - [ ] How about in the context of non-editor library?
+    - [ ] How about in the context of an editor library?
+    - [ ] Should it be a dedicated service/helper (that could be overridden/augmented in an editor context)?
+- [ ] What events should an asset viewmodel expose?
+    - [ ] What register to them?
+- [ ] When is an asset destroyed?
+- [ ] What must be cleaned up when an asset viewmodels is "destroyed"?
+
+Ideally we would like to have an asset viewmodel just be a proxy to an assetitem (itself a wrapper around an asset).
+Any editing capability should be externalized (i.e. other classes/services act on the asset viewmodel), however the asset viewmoel can itself publish events on changes
+
+**Roadmap**
+- Move asset creation to the `AssetViewModelService` (implementing `IAssetViewModelService`)
+- Call that creation from the `PackageViewModel` (after all an asset item is within a package, so it makes sense that the viewmodel versions of it follow the same pattern).
+    -> this allows overriding the behavior to another implementation of `IAssetViewModelService`.
+- During that creation, also registers to asset change events to deal with undo/redo (i.e. move away that coe from the `AssetViewModel` class).
+- At this point, clean up what can be on the `AssetViewModel` class.
+- Make sure both xplat and WPF implementation match in behavior.
